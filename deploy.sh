@@ -19,7 +19,8 @@ git stash pop || true
 echo "=== Установка зависимостей ==="
 npm install
 
-echo "=== Сборка проекта ==="
+echo "=== Чистая сборка (удаляем .next во избежание stale client manifest) ==="
+rm -rf .next
 npm run build
 
 echo "=== Перезапуск сайта ==="
