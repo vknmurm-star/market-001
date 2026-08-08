@@ -5,9 +5,12 @@ import { redirect } from "next/navigation";
 import { isAdminAuthed, signInAdmin, signOutAdmin } from "@/lib/adminAuth";
 import {
   addProductImage,
+  countProductImages,
   createProduct,
   deleteProduct,
   deleteProductImage,
+  MAX_PRODUCT_IMAGES,
+  reorderProductImages,
   saveUploadedImage,
   syncMainImage,
   updateProduct,
@@ -50,19 +53,39 @@ function parseProduct(formData: FormData): ProductInput {
   };
 }
 
-/** Сохраняет все загруженные файлы в галерею товара. */
+/**
+ * Сохраняет загруженные файлы в галерею товара, не превышая лимит
+ * MAX_PRODUCT_IMAGES (лишние файлы игнорируются).
+ */
 async function saveUploadedGallery(
   formData: FormData,
   productId: number,
   sku: string,
 ) {
+  let slots = MAX_PRODUCT_IMAGES - countProductImages(productId);
+  if (slots <= 0) return;
   const files = formData.getAll("imageFile");
   for (const file of files) {
+    if (slots <= 0) break;
     if (file instanceof File && file.size > 0) {
       const saved = await saveUploadedImage(file, sku);
-      if (saved) addProductImage(productId, saved);
+      if (saved) {
+        addProductImage(productId, saved);
+        slots--;
+      }
     }
   }
+}
+
+/** Порядок изображений из скрытого поля imageOrder (список id через запятую). */
+function applyImageOrder(formData: FormData, productId: number) {
+  const raw = String(formData.get("imageOrder") ?? "").trim();
+  if (!raw) return;
+  const ids = raw
+    .split(",")
+    .map((s) => Number(s.trim()))
+    .filter((n) => Number.isInteger(n) && n > 0);
+  if (ids.length) reorderProductImages(productId, ids);
 }
 
 export async function createProductAction(formData: FormData) {
@@ -86,7 +109,9 @@ export async function updateProductAction(formData: FormData) {
     const imgId = Number(raw);
     if (Number.isInteger(imgId)) deleteProductImage(imgId);
   }
-  // добавление новых загруженных
+  // порядок оставшихся
+  applyImageOrder(formData, id);
+  // добавление новых загруженных (в пределах лимита)
   await saveUploadedGallery(formData, id, input.sku);
 
   syncMainImage(id);

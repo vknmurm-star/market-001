@@ -12,6 +12,7 @@ const ALLOWED_TYPES: Record<string, string> = {
   "image/gif": "gif",
 };
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5 МБ
+export const MAX_PRODUCT_IMAGES = 4; // не больше 4 фото на товар
 
 /**
  * Сохраняет загруженный файл изображения в public/uploads и возвращает его
@@ -80,6 +81,25 @@ export function deleteProductImage(imageId: number): void {
   if (!row) return;
   db.prepare(`DELETE FROM product_images WHERE id = ?`).run(imageId);
   deleteUploadFile(row.path);
+}
+
+/** Применяет порядок изображений: sort = позиция в массиве orderedIds. */
+export function reorderProductImages(
+  productId: number,
+  orderedIds: number[],
+): void {
+  const db = getDb();
+  const upd = db.prepare(
+    `UPDATE product_images SET sort = ? WHERE id = ? AND product_id = ?`,
+  );
+  orderedIds.forEach((id, i) => upd.run(i, id, productId));
+}
+
+export function countProductImages(productId: number): number {
+  const row = getDb()
+    .prepare(`SELECT COUNT(*) AS n FROM product_images WHERE product_id = ?`)
+    .get(productId) as unknown as { n: number };
+  return row.n;
 }
 
 /** Ставит главным изображением товара первую картинку галереи (если она есть). */
