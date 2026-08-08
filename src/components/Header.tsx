@@ -56,21 +56,23 @@ export default function Header({
           aria-label="Маркет — на главную"
           className="flex shrink-0 items-center gap-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
-          {logo && (
+          {logo ? (
+            // логотип заменяет текстовую надпись
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={logo}
-              alt=""
-              className="h-9 w-auto max-h-9 object-contain"
+              alt="Маркет"
+              className="h-9 w-auto max-h-10 object-contain"
             />
-          )}
-          <span className="text-2xl font-bold leading-none tracking-tight text-accent">
-            Маркет
-          </span>
-          {!logo && (
-            <span className="hidden text-sm text-muted sm:inline">
-              косметика и красота
-            </span>
+          ) : (
+            <>
+              <span className="text-2xl font-bold leading-none tracking-tight text-accent">
+                Маркет
+              </span>
+              <span className="hidden text-sm text-muted sm:inline">
+                косметика и красота
+              </span>
+            </>
           )}
         </Link>
 

@@ -77,8 +77,8 @@ export default async function AdminSettingsPage({
               className="block w-full text-sm text-muted file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-accent-dark"
             />
             <span className="mt-1 block text-xs text-muted">
-              PNG, JPG, WEBP или SVG, до 2 МБ. Лучше — на прозрачном фоне,
-              горизонтальный. Отобразится рядом с названием «Маркет».
+              PNG, JPG, WEBP или SVG, до 2 МБ. Лучше — горизонтальный, на
+              прозрачном фоне. Заменит текстовую надпись «Маркет» в шапке.
             </span>
           </label>
           <div className="flex items-center gap-3">
