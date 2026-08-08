@@ -33,6 +33,69 @@ export async function saveUploadedImage(
   return `/uploads/${name}`;
 }
 
+/** Удаляет файл из public/uploads по публичному пути (безопасно, без traversal). */
+export function deleteUploadFile(p: string | null | undefined): void {
+  if (!p || !p.startsWith("/uploads/")) return;
+  const full = path.join(UPLOAD_DIR, p.slice("/uploads/".length));
+  if (full !== UPLOAD_DIR && !full.startsWith(UPLOAD_DIR + path.sep)) return;
+  try {
+    if (fs.existsSync(full)) fs.unlinkSync(full);
+  } catch {
+    // файл мог быть уже удалён — не критично
+  }
+}
+
+export interface ProductImage {
+  id: number;
+  path: string;
+}
+
+export function getProductImages(productId: number): ProductImage[] {
+  return getDb()
+    .prepare(
+      `SELECT id, path FROM product_images WHERE product_id = ? ORDER BY sort ASC, id ASC`,
+    )
+    .all(productId) as unknown as ProductImage[];
+}
+
+export function addProductImage(productId: number, imgPath: string): void {
+  const db = getDb();
+  const max = db
+    .prepare(
+      `SELECT COALESCE(MAX(sort), -1) AS m FROM product_images WHERE product_id = ?`,
+    )
+    .get(productId) as unknown as { m: number };
+  db.prepare(
+    `INSERT INTO product_images (product_id, path, sort) VALUES (?, ?, ?)`,
+  ).run(productId, imgPath, max.m + 1);
+}
+
+export function deleteProductImage(imageId: number): void {
+  const db = getDb();
+  const row = db
+    .prepare(`SELECT path FROM product_images WHERE id = ?`)
+    .get(imageId) as unknown as { path: string } | undefined;
+  if (!row) return;
+  db.prepare(`DELETE FROM product_images WHERE id = ?`).run(imageId);
+  deleteUploadFile(row.path);
+}
+
+/** Ставит главным изображением товара первую картинку галереи (если она есть). */
+export function syncMainImage(productId: number): void {
+  const db = getDb();
+  const first = db
+    .prepare(
+      `SELECT path FROM product_images WHERE product_id = ? ORDER BY sort ASC, id ASC LIMIT 1`,
+    )
+    .get(productId) as unknown as { path: string } | undefined;
+  if (first) {
+    db.prepare(`UPDATE products SET image = ? WHERE id = ?`).run(
+      first.path,
+      productId,
+    );
+  }
+}
+
 export interface ProductInput {
   sku: string;
   name: string;
@@ -86,11 +149,13 @@ export function createProduct(input: ProductInput): number {
 
 export function updateProduct(id: number, input: ProductInput): void {
   const db = getDb();
+  // image не трогаем — им управляет галерея (product_images + syncMainImage),
+  // чтобы правка полей не затирала картинку.
   db.prepare(
     `UPDATE products SET
        sku = @sku, name = @name, category_id = @categoryId, price = @price,
        old_price = @oldPrice, description = @description, stock = @stock,
-       slug = @slug, image = @image
+       slug = @slug
      WHERE id = @id`,
   ).run({
     id,
@@ -102,12 +167,22 @@ export function updateProduct(id: number, input: ProductInput): void {
     description: input.description,
     stock: input.stock,
     slug: uniqueSlug(input.name, id),
-    image: input.image ?? null,
   });
 }
 
 export function deleteProduct(id: number): void {
-  getDb().prepare(`DELETE FROM products WHERE id = ?`).run(id);
+  const db = getDb();
+  const main = db.prepare(`SELECT image FROM products WHERE id = ?`).get(id) as
+    | unknown as { image: string | null }
+    | undefined;
+  const gallery = db
+    .prepare(`SELECT path FROM product_images WHERE product_id = ?`)
+    .all(id) as unknown as { path: string }[];
+  db.prepare(`DELETE FROM products WHERE id = ?`).run(id); // CASCADE чистит product_images
+  // подчищаем файлы с диска
+  const paths = new Set<string>(gallery.map((g) => g.path));
+  if (main?.image) paths.add(main.image);
+  for (const p of paths) deleteUploadFile(p);
 }
 
 export function getCategoriesRaw(): Category[] {

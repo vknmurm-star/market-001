@@ -4,9 +4,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { isAdminAuthed, signInAdmin, signOutAdmin } from "@/lib/adminAuth";
 import {
+  addProductImage,
   createProduct,
   deleteProduct,
+  deleteProductImage,
   saveUploadedImage,
+  syncMainImage,
   updateProduct,
   type ProductInput,
 } from "@/lib/adminData";
@@ -47,20 +50,27 @@ function parseProduct(formData: FormData): ProductInput {
   };
 }
 
-/** Если админ загрузил файл — сохраняем его и подменяем путь к изображению. */
-async function applyUploadedImage(formData: FormData, input: ProductInput) {
-  const file = formData.get("imageFile");
-  if (file instanceof File && file.size > 0) {
-    const saved = await saveUploadedImage(file, input.sku);
-    if (saved) input.image = saved;
+/** Сохраняет все загруженные файлы в галерею товара. */
+async function saveUploadedGallery(
+  formData: FormData,
+  productId: number,
+  sku: string,
+) {
+  const files = formData.getAll("imageFile");
+  for (const file of files) {
+    if (file instanceof File && file.size > 0) {
+      const saved = await saveUploadedImage(file, sku);
+      if (saved) addProductImage(productId, saved);
+    }
   }
 }
 
 export async function createProductAction(formData: FormData) {
   await ensureAuthed();
   const input = parseProduct(formData);
-  await applyUploadedImage(formData, input);
-  createProduct(input);
+  const id = createProduct(input);
+  await saveUploadedGallery(formData, id, input.sku);
+  syncMainImage(id);
   revalidatePath("/admin");
   redirect("/admin");
 }
@@ -69,8 +79,17 @@ export async function updateProductAction(formData: FormData) {
   await ensureAuthed();
   const id = Number(formData.get("id"));
   const input = parseProduct(formData);
-  await applyUploadedImage(formData, input);
   updateProduct(id, input);
+
+  // удаление отмеченных изображений (вместе с файлами на диске)
+  for (const raw of formData.getAll("deleteImage")) {
+    const imgId = Number(raw);
+    if (Number.isInteger(imgId)) deleteProductImage(imgId);
+  }
+  // добавление новых загруженных
+  await saveUploadedGallery(formData, id, input.sku);
+
+  syncMainImage(id);
   revalidatePath("/admin");
   redirect("/admin");
 }

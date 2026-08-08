@@ -1,14 +1,17 @@
 import Link from "next/link";
 import type { Category, Product } from "@/lib/types";
+import type { ProductImage } from "@/lib/adminData";
 
 export default function ProductForm({
   categories,
   action,
   product,
+  images = [],
 }: {
   categories: Category[];
   action: (formData: FormData) => void;
   product?: Product;
+  images?: ProductImage[];
 }) {
   const inputClass =
     "w-full rounded-lg border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent";
@@ -103,48 +106,72 @@ export default function ProductForm({
         />
       </label>
 
-      <div className="space-y-2 rounded-xl border bg-background/50 p-4">
-        <span className="block text-sm font-medium">Изображение товара</span>
-        <div className="flex items-center gap-4">
-          <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg border bg-card">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={product?.image || "/products/accessories.svg"}
-              alt="Текущее изображение товара"
-              className="h-full w-full object-cover"
-            />
+      <div className="space-y-3 rounded-xl border bg-background/50 p-4">
+        <span className="block text-sm font-medium">Изображения товара</span>
+
+        {images.length > 0 ? (
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+            {images.map((img, i) => (
+              <label
+                key={img.id}
+                className="group relative block cursor-pointer overflow-hidden rounded-lg border bg-card"
+              >
+                <span className="relative block aspect-square">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={img.path}
+                    alt={`Изображение ${i + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                </span>
+                <span className="flex items-center gap-1 border-t bg-card px-2 py-1 text-xs text-muted">
+                  <input
+                    type="checkbox"
+                    name="deleteImage"
+                    value={img.id}
+                    className="accent-accent"
+                  />
+                  удалить
+                </span>
+                {i === 0 && (
+                  <span className="absolute left-1 top-1 rounded bg-accent px-1.5 py-0.5 text-[10px] font-bold text-white">
+                    главное
+                  </span>
+                )}
+              </label>
+            ))}
           </div>
-          <div className="flex-1">
-            <label className="block">
-              <span className="mb-1 block text-sm font-medium">
-                Загрузить изображение
-              </span>
-              <input
-                type="file"
-                name="imageFile"
-                accept="image/png,image/jpeg,image/webp,image/gif"
-                className="block w-full text-sm text-muted file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-accent-dark"
+        ) : (
+          <div className="flex items-center gap-3 text-sm text-muted">
+            <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border bg-card">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={product?.image || "/products/accessories.svg"}
+                alt="Текущее изображение"
+                className="h-full w-full object-cover"
               />
-            </label>
-            <span className="mt-1 block text-xs text-muted">
-              JPG, PNG, WEBP или GIF, до 5 МБ. Заменит текущее изображение.
+            </span>
+            <span>
+              Загруженных изображений пока нет — используется заглушка по
+              категории. Добавьте фото ниже.
             </span>
           </div>
-        </div>
+        )}
 
         <label className="block">
-          <span className="mb-1 block text-xs font-medium text-muted">
-            …или укажите путь вручную
+          <span className="mb-1 block text-sm font-medium">
+            Добавить изображения
           </span>
           <input
-            name="image"
-            defaultValue={product?.image ?? ""}
-            placeholder="/products/face-care.svg"
-            className={inputClass}
+            type="file"
+            name="imageFile"
+            multiple
+            accept="image/png,image/jpeg,image/webp,image/gif"
+            className="block w-full text-sm text-muted file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-accent-dark"
           />
           <span className="mt-1 block text-xs text-muted">
-            Оставьте пустым — подставится заглушка по категории. Если загрузили
-            файл выше, он имеет приоритет.
+            Можно выбрать несколько файлов. JPG, PNG, WEBP или GIF, до 5 МБ каждый.
+            Первое изображение галереи используется как главное (на карточках).
           </span>
         </label>
       </div>

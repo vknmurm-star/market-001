@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProductBySlug, getRelatedProducts } from "@/lib/catalog";
+import { getProductImages } from "@/lib/adminData";
 import { absoluteUrl, formatPrice, SITE_NAME, SITE_URL } from "@/lib/site";
 import PriceTag from "@/components/PriceTag";
 import AddToCartButton from "@/components/AddToCartButton";
@@ -42,17 +43,21 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   const related = getRelatedProducts(product, 4);
 
-  // Второй ракурс для галереи есть только у сгенерированных плейсхолдеров по
-  // SKU (/products/AC-003.svg -> /products/AC-003-2.svg). Для загруженных из
-  // админки и прочих изображений показываем одно фото (иначе миниатюра 404).
-  const gallery = (() => {
-    const img = product.image;
-    if (!img) return ["/products/accessories.svg"];
-    if (/^\/products\/[A-Za-z]{2}-\d+\.svg$/.test(img)) {
-      return [img, img.replace(/\.svg$/, "-2.svg")];
-    }
-    return [img];
-  })();
+  // Галерея: если у товара есть загруженные изображения — показываем их.
+  // Иначе фолбэк: у сгенерированных плейсхолдеров по SKU есть второй ракурс
+  // (/products/AC-003.svg -> /products/AC-003-2.svg), у прочих — одно фото.
+  const uploaded = getProductImages(product.id);
+  const gallery =
+    uploaded.length > 0
+      ? uploaded.map((i) => i.path)
+      : (() => {
+          const img = product.image;
+          if (!img) return ["/products/accessories.svg"];
+          if (/^\/products\/[A-Za-z]{2}-\d+\.svg$/.test(img)) {
+            return [img, img.replace(/\.svg$/, "-2.svg")];
+          }
+          return [img];
+        })();
 
   const productJsonLd = {
     "@context": "https://schema.org",

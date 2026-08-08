@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/adminAuth";
 import { getCategories, getProductById } from "@/lib/catalog";
+import { getProductImages } from "@/lib/adminData";
 import ProductForm from "../../ProductForm";
 import { updateProductAction } from "../../actions";
 
@@ -14,6 +15,7 @@ export default async function EditProductPage({ params }: { params: Params }) {
   const product = getProductById(Number(id));
   if (!product) notFound();
   const categories = getCategories();
+  const images = getProductImages(product.id);
 
   return (
     <div>
@@ -24,6 +26,7 @@ export default async function EditProductPage({ params }: { params: Params }) {
         categories={categories}
         action={updateProductAction}
         product={product}
+        images={images}
       />
     </div>
   );

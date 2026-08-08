@@ -93,6 +93,14 @@ export function createSchema(database: DatabaseSync) {
       quantity   INTEGER NOT NULL DEFAULT 1
     );
 
+    CREATE TABLE IF NOT EXISTS product_images (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+      path       TEXT NOT NULL,
+      sort       INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS password_resets (
       id         INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -106,6 +114,7 @@ export function createSchema(database: DatabaseSync) {
     CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
     CREATE INDEX IF NOT EXISTS idx_orders_email ON orders(email);
     CREATE INDEX IF NOT EXISTS idx_pwreset_token ON password_resets(token_hash);
+    CREATE INDEX IF NOT EXISTS idx_product_images_product ON product_images(product_id);
   `);
 }
 
