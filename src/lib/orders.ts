@@ -1,6 +1,7 @@
 import { getDb } from "./db";
 import { getProductsByIds } from "./catalog";
 import type {
+  DeliveryMethod,
   Order,
   OrderItem,
   OrderStatus,
@@ -13,6 +14,7 @@ export interface NewOrderInput {
   email: string;
   address: string;
   comment?: string;
+  deliveryMethod: DeliveryMethod;
   paymentMethod: PaymentMethod;
   items: { productId: number; quantity: number }[];
 }
@@ -67,8 +69,8 @@ export function createOrder(input: NewOrderInput): CreatedOrder {
 
   const insertOrder = db.prepare(
     `INSERT INTO orders
-       (order_number, user_id, customer_name, phone, email, address, comment, payment_method, status, total)
-     VALUES (@orderNumber, @userId, @customerName, @phone, @email, @address, @comment, @paymentMethod, 'new', @total)`,
+       (order_number, user_id, customer_name, phone, email, address, comment, delivery_method, payment_method, status, total)
+     VALUES (@orderNumber, @userId, @customerName, @phone, @email, @address, @comment, @deliveryMethod, @paymentMethod, 'new', @total)`,
   );
   const insertItem = db.prepare(
     `INSERT INTO order_items (order_id, product_id, sku, name, price, quantity)
@@ -95,6 +97,7 @@ export function createOrder(input: NewOrderInput): CreatedOrder {
       email: input.email.trim().toLowerCase(),
       address: input.address.trim(),
       comment: (input.comment ?? "").trim(),
+      deliveryMethod: input.deliveryMethod,
       paymentMethod: input.paymentMethod,
       total,
     });
@@ -130,6 +133,7 @@ interface OrderRow {
   email: string;
   address: string;
   comment: string;
+  delivery_method: DeliveryMethod;
   payment_method: PaymentMethod;
   status: OrderStatus;
   total: number;
@@ -156,6 +160,7 @@ function mapOrder(r: OrderRow): Order {
     email: r.email,
     address: r.address,
     comment: r.comment,
+    deliveryMethod: r.delivery_method,
     paymentMethod: r.payment_method,
     status: r.status,
     total: r.total,

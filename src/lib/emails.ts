@@ -1,6 +1,10 @@
 import { adminEmail, sendMail } from "./mailer";
 import { SITE_URL, SITE_NAME, formatPrice } from "./site";
-import { PAYMENT_METHOD_LABELS, type Order } from "./types";
+import {
+  DELIVERY_METHOD_LABELS,
+  PAYMENT_METHOD_LABELS,
+  type Order,
+} from "./types";
 
 function layout(title: string, bodyHtml: string): string {
   return `<!doctype html><html lang="ru"><body style="margin:0;background:#fdfbfa;font-family:Arial,Helvetica,sans-serif;color:#2b2226">
@@ -46,7 +50,8 @@ export async function sendOrderConfirmation(order: Order): Promise<boolean> {
     ${itemsTable(order)}
     <p style="font-size:14px;color:#7a6f74;margin-top:16px">
       Способ оплаты: ${PAYMENT_METHOD_LABELS[order.paymentMethod]}<br/>
-      ${order.address ? `Доставка: ${order.address}<br/>` : ""}
+      Доставка: ${DELIVERY_METHOD_LABELS[order.deliveryMethod]}<br/>
+      ${order.address ? `Адрес: ${order.address}<br/>` : ""}
       Мы свяжемся с вами по телефону ${order.phone} для подтверждения.
     </p>
     <p style="margin-top:16px">
@@ -74,6 +79,7 @@ export async function sendAdminNewOrder(order: Order): Promise<boolean> {
       Покупатель: ${order.customerName}<br/>
       Телефон: ${order.phone}<br/>
       Email: ${order.email}<br/>
+      Доставка: ${DELIVERY_METHOD_LABELS[order.deliveryMethod]}<br/>
       ${order.address ? `Адрес: ${order.address}<br/>` : ""}
       Оплата: ${PAYMENT_METHOD_LABELS[order.paymentMethod]}
     </p>

@@ -6,6 +6,11 @@ import Link from "next/link";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/site";
 import Honeypot from "@/components/Honeypot";
+import {
+  DELIVERY_METHODS,
+  DELIVERY_METHOD_LABELS,
+  type DeliveryMethod,
+} from "@/lib/types";
 
 type Payment = "online" | "sbp" | "cash";
 
@@ -21,6 +26,7 @@ export default function CheckoutForm({
   const { items, total, clear, ready } = useCart();
   const router = useRouter();
   const [payment, setPayment] = useState<Payment>("cash");
+  const [delivery, setDelivery] = useState<DeliveryMethod>("cdek");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,6 +60,7 @@ export default function CheckoutForm({
           address: fd.get("address"),
           comment: fd.get("comment"),
           website: fd.get("website"), // honeypot
+          deliveryMethod: delivery,
           paymentMethod: payment,
           items: items.map((i) => ({ productId: i.id, quantity: i.quantity })),
         }),
@@ -134,12 +141,29 @@ export default function CheckoutForm({
             )}
           </label>
           <label className="block">
-            <span className="mb-1 block text-sm font-medium">Адрес доставки</span>
+            <span className="mb-1 block text-sm font-medium">Служба доставки</span>
+            <select
+              name="delivery"
+              value={delivery}
+              onChange={(e) => setDelivery(e.target.value as DeliveryMethod)}
+              className={inputClass}
+            >
+              {DELIVERY_METHODS.map((d) => (
+                <option key={d} value={d}>
+                  {DELIVERY_METHOD_LABELS[d]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium">
+              Адрес / пункт выдачи
+            </span>
             <input
               name="address"
               className={inputClass}
               autoComplete="street-address"
-              placeholder="Город, улица, дом, квартира"
+              placeholder="Город, улица, дом, квартира или адрес ПВЗ"
             />
           </label>
           <label className="block">

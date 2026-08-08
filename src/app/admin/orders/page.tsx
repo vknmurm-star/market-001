@@ -2,6 +2,7 @@ import { requireAdmin } from "@/lib/adminAuth";
 import { getAllOrders } from "@/lib/orders";
 import { formatPrice } from "@/lib/site";
 import {
+  DELIVERY_METHOD_LABELS,
   ORDER_STATUS_LABELS,
   PAYMENT_METHOD_LABELS,
   type OrderStatus,
@@ -44,9 +45,10 @@ export default async function AdminOrdersPage() {
                 <div className="mt-1 text-sm">
                   {o.customerName} · {o.phone} · {o.email}
                 </div>
-                {o.address && (
-                  <div className="text-sm text-muted">Доставка: {o.address}</div>
-                )}
+                <div className="text-sm text-muted">
+                  Доставка: {DELIVERY_METHOD_LABELS[o.deliveryMethod]}
+                  {o.address ? ` · ${o.address}` : ""}
+                </div>
                 {o.comment && (
                   <div className="text-sm text-muted">Комментарий: {o.comment}</div>
                 )}

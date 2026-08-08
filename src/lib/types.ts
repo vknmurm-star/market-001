@@ -26,6 +26,13 @@ export type OrderStatus = "new" | "processing" | "done";
 
 export type PaymentMethod = "online" | "sbp" | "cash";
 
+export type DeliveryMethod =
+  | "cdek"
+  | "boxberry"
+  | "dpd"
+  | "fivepost"
+  | "russianpost";
+
 export interface OrderItem {
   id: number;
   orderId: number;
@@ -45,6 +52,7 @@ export interface Order {
   email: string;
   address: string;
   comment: string;
+  deliveryMethod: DeliveryMethod;
   paymentMethod: PaymentMethod;
   status: OrderStatus;
   total: number;
@@ -70,3 +78,19 @@ export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
   sbp: "СБП — Система быстрых платежей (тестовый режим)",
   cash: "При получении",
 };
+
+export const DELIVERY_METHOD_LABELS: Record<DeliveryMethod, string> = {
+  cdek: "СДЭК",
+  boxberry: "Boxberry",
+  dpd: "DPD",
+  fivepost: "5Post",
+  russianpost: "Почта России",
+};
+
+export const DELIVERY_METHODS: DeliveryMethod[] = [
+  "cdek",
+  "boxberry",
+  "dpd",
+  "fivepost",
+  "russianpost",
+];

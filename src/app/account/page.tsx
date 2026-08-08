@@ -3,7 +3,11 @@ import Link from "next/link";
 import { requireUser } from "@/lib/userAuth";
 import { getOrdersByEmail } from "@/lib/orders";
 import { formatPrice } from "@/lib/site";
-import { ORDER_STATUS_LABELS, PAYMENT_METHOD_LABELS } from "@/lib/types";
+import {
+  DELIVERY_METHOD_LABELS,
+  ORDER_STATUS_LABELS,
+  PAYMENT_METHOD_LABELS,
+} from "@/lib/types";
 import { logoutAction } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -81,6 +85,7 @@ export default async function AccountPage() {
               </ul>
               <div className="mt-3 flex items-center justify-between border-t pt-3">
                 <span className="text-sm text-muted">
+                  {DELIVERY_METHOD_LABELS[o.deliveryMethod]} ·{" "}
                   {PAYMENT_METHOD_LABELS[o.paymentMethod]}
                 </span>
                 <span className="font-bold">{formatPrice(o.total)}</span>

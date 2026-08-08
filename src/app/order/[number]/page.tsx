@@ -3,7 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOrderByNumber } from "@/lib/orders";
 import { formatPrice } from "@/lib/site";
-import { PAYMENT_METHOD_LABELS, ORDER_STATUS_LABELS } from "@/lib/types";
+import {
+  DELIVERY_METHOD_LABELS,
+  PAYMENT_METHOD_LABELS,
+  ORDER_STATUS_LABELS,
+} from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -68,9 +72,15 @@ export default async function OrderPage({ params }: { params: Params }) {
                 {PAYMENT_METHOD_LABELS[order.paymentMethod]}
               </dd>
             </div>
+            <div className="flex justify-between">
+              <dt>Доставка</dt>
+              <dd className="text-foreground">
+                {DELIVERY_METHOD_LABELS[order.deliveryMethod]}
+              </dd>
+            </div>
             {order.address && (
               <div className="flex justify-between gap-4">
-                <dt>Доставка</dt>
+                <dt>Адрес</dt>
                 <dd className="text-right text-foreground">{order.address}</dd>
               </div>
             )}

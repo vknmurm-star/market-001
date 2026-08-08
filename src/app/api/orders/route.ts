@@ -3,7 +3,11 @@ import { createOrder, getOrderByNumber } from "@/lib/orders";
 import { getCurrentUser } from "@/lib/userAuth";
 import { sendOrderConfirmation, sendAdminNewOrder } from "@/lib/emails";
 import { clientIp, maybeCleanup, rateLimit } from "@/lib/rateLimit";
-import type { PaymentMethod } from "@/lib/types";
+import {
+  DELIVERY_METHODS,
+  type DeliveryMethod,
+  type PaymentMethod,
+} from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +17,7 @@ interface Body {
   email?: string;
   address?: string;
   comment?: string;
+  deliveryMethod?: string;
   paymentMethod?: string;
   website?: string; // honeypot — люди его не заполняют
   items?: { productId?: number; quantity?: number }[];
@@ -56,6 +61,11 @@ export async function POST(req: Request) {
     body.paymentMethod === "online" || body.paymentMethod === "sbp"
       ? body.paymentMethod
       : "cash";
+  const deliveryMethod: DeliveryMethod = DELIVERY_METHODS.includes(
+    body.deliveryMethod as DeliveryMethod,
+  )
+    ? (body.deliveryMethod as DeliveryMethod)
+    : "cdek";
 
   if (!name || !phone || !email) {
     return NextResponse.json(
@@ -85,6 +95,7 @@ export async function POST(req: Request) {
       email,
       address,
       comment: body.comment ?? "",
+      deliveryMethod,
       paymentMethod,
       items,
     });

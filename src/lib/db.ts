@@ -75,10 +75,11 @@ export function createSchema(database: DatabaseSync) {
       customer_name  TEXT NOT NULL,
       phone          TEXT NOT NULL,
       email          TEXT NOT NULL,
-      address        TEXT NOT NULL DEFAULT '',
-      comment        TEXT NOT NULL DEFAULT '',
-      payment_method TEXT NOT NULL DEFAULT 'cash',
-      status         TEXT NOT NULL DEFAULT 'new',
+      address         TEXT NOT NULL DEFAULT '',
+      comment         TEXT NOT NULL DEFAULT '',
+      delivery_method TEXT NOT NULL DEFAULT 'cdek',
+      payment_method  TEXT NOT NULL DEFAULT 'cash',
+      status          TEXT NOT NULL DEFAULT 'new',
       total          INTEGER NOT NULL DEFAULT 0,
       created_at     TEXT NOT NULL DEFAULT (datetime('now'))
     );
@@ -128,6 +129,15 @@ export function migrateSchema(database: DatabaseSync) {
     .all() as unknown as { name: string }[];
   if (!cols.some((c) => c.name === "password_hash")) {
     database.exec(`ALTER TABLE users ADD COLUMN password_hash TEXT`);
+  }
+
+  const orderCols = database
+    .prepare(`PRAGMA table_info(orders)`)
+    .all() as unknown as { name: string }[];
+  if (!orderCols.some((c) => c.name === "delivery_method")) {
+    database.exec(
+      `ALTER TABLE orders ADD COLUMN delivery_method TEXT NOT NULL DEFAULT 'cdek'`,
+    );
   }
 }
 
