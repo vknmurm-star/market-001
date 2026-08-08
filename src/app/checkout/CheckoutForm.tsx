@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/site";
+import Honeypot from "@/components/Honeypot";
 
 type Payment = "online" | "cash";
 
@@ -52,6 +53,7 @@ export default function CheckoutForm({
           email: fd.get("email"),
           address: fd.get("address"),
           comment: fd.get("comment"),
+          website: fd.get("website"), // honeypot
           paymentMethod: payment,
           items: items.map((i) => ({ productId: i.id, quantity: i.quantity })),
         }),
@@ -88,6 +90,7 @@ export default function CheckoutForm({
       )}
 
       <form onSubmit={handleSubmit} className="grid gap-8 lg:grid-cols-[1fr_360px]">
+        <Honeypot />
         <div className="space-y-5 rounded-2xl border bg-card p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block">

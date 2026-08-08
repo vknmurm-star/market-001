@@ -23,8 +23,24 @@
 ```
 SITE_URL=https://market.an51.su
 ADMIN_PASSWORD=<надёжный пароль администратора>
+SESSION_SECRET=<длинная случайная строка для подписи сессий покупателей>
+# SMTP (письма покупателям) — без них письма просто не отправляются:
+SMTP_HOST=smtp.timeweb.ru
+SMTP_PORT=465
+SMTP_USER=market@an51.su
+SMTP_PASS=<app-пароль ящика>   # секрет вписывает владелец, не Claude
+SMTP_FROM=market@an51.su
+ADMIN_EMAIL=market@an51.su
 # DATABASE_PATH=/var/www/market-store/data/market.db   # опционально
 ```
+
+Почта (`src/lib/mailer.ts`, `src/lib/emails.ts`): отправка best-effort через
+внешний SMTP-релей (напрямую с VPS нельзя — нет PTR/SPF/DKIM). Письма:
+подтверждение заказа + уведомление админу (в `/api/orders`), приветствие при
+регистрации (в `registerAction`). Антиспам (`src/lib/rateLimit.ts` +
+`Honeypot`): honeypot-поле `website` на формах регистрации/входа/заказа и
+rate-limit по IP. Для IP за nginx нужны заголовки `X-Forwarded-For`/`X-Real-IP`
+(добавлены в конфиг market-store).
 
 - `SITE_URL` (`src/lib/site.ts`) — единственный источник абсолютных URL:
   canonical, OG, JSON-LD, `sitemap.xml`, `robots.txt`. Без порта, без слэша.

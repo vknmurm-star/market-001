@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/userAuth";
+import Honeypot from "@/components/Honeypot";
 import { loginAction } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -34,6 +35,7 @@ export default async function LoginPage({
         </p>
 
         <form action={loginAction} className="mt-6 space-y-4">
+          <Honeypot />
           <label className="block">
             <span className="mb-1 block text-sm font-medium">Email</span>
             <input

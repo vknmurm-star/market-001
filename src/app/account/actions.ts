@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import {
   authenticateUser,
   changePassword,
@@ -10,12 +11,33 @@ import {
   startSession,
   updateProfile,
 } from "@/lib/userAuth";
+import { sendWelcome } from "@/lib/emails";
+import { clientIp, maybeCleanup, rateLimit } from "@/lib/rateLimit";
 
 function isValidEmail(email: string): boolean {
   return /.+@.+\..+/.test(email);
 }
 
+/** Honeypot: скрытое поле должно быть пустым; иначе это бот. */
+function isBot(formData: FormData): boolean {
+  return String(formData.get("website") ?? "").trim() !== "";
+}
+
+async function ip(): Promise<string> {
+  return clientIp(await headers());
+}
+
 export async function registerAction(formData: FormData) {
+  if (isBot(formData)) redirect("/");
+  maybeCleanup();
+  const rl = rateLimit(`register:${await ip()}`, 5, 60 * 60 * 1000);
+  if (!rl.ok) {
+    redirect(
+      "/account/register?error=" +
+        encodeURIComponent("Слишком много попыток. Попробуйте позже."),
+    );
+  }
+
   const name = String(formData.get("name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
@@ -42,10 +64,22 @@ export async function registerAction(formData: FormData) {
   }
 
   await startSession(userId);
+  // Приветственное письмо — best-effort, не блокирует регистрацию.
+  await sendWelcome(name, email);
   redirect("/account");
 }
 
 export async function loginAction(formData: FormData) {
+  if (isBot(formData)) redirect("/");
+  maybeCleanup();
+  const rl = rateLimit(`login:${await ip()}`, 10, 10 * 60 * 1000);
+  if (!rl.ok) {
+    redirect(
+      "/account/login?error=" +
+        encodeURIComponent("Слишком много попыток. Попробуйте позже."),
+    );
+  }
+
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
