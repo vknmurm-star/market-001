@@ -140,7 +140,7 @@ export default function Header({
       <div className="border-t bg-background/60">
         <nav
           aria-label="Категории"
-          className="container-page flex gap-5 overflow-x-auto text-sm"
+          className="container-page flex gap-1 overflow-x-auto py-1.5 text-sm"
         >
           {categories.map((c) => {
             const active = isActive(`/catalog/${c.slug}`, true);
@@ -149,10 +149,10 @@ export default function Header({
                 key={c.slug}
                 href={`/catalog/${c.slug}`}
                 aria-current={active ? "page" : undefined}
-                className={`whitespace-nowrap border-b-2 py-2.5 transition-colors focus-visible:outline-none ${
+                className={`whitespace-nowrap rounded-full px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                   active
-                    ? "border-accent font-medium text-accent"
-                    : "border-transparent text-muted hover:text-accent"
+                    ? "bg-accent-soft font-medium text-accent-dark"
+                    : "text-muted hover:text-accent"
                 }`}
               >
                 {c.name}
