@@ -72,7 +72,7 @@ names, plain unbranded generic packaging`.
 
 - **face-care** — an elegant flat lay of facial skincare products — a white cream jar, an amber serum dropper bottle and a pastel tube — on a soft blush pink background
 - **body-care** — an elegant flat lay of body care products — a glass body oil bottle, an open scrub jar and a hand cream tube — on a soft mint green background
-- **hair-care** — an elegant flat lay of hair care products — a shampoo bottle, a hair mask jar and a spray bottle — on a soft periwinkle blue background
+- **hair-care** — an elegant flat lay of hair care products — a shampoo bottle, a hair mask jar and a spray bottle — on a soft periwinkle background
 - **makeup** — an elegant flat lay of makeup products — a foundation bottle, a mascara, an open eyeshadow palette and a lipstick — on a warm peach background
 - **perfume** — an elegant arrangement of several perfume glass flacons of different shapes — on a soft lavender background
 - **accessories** — an elegant flat lay of beauty accessories — a set of makeup brushes, a cosmetic pouch and a rose quartz facial roller — on a soft sky blue background
