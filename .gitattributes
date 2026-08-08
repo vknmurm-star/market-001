@@ -1,0 +1,4 @@
+# Единообразные переносы строк. Shell-скрипты ОБЯЗАТЕЛЬНО с LF, иначе bash
+# на Linux-сервере не запустит их (ошибка "bad interpreter: /bin/bash^M").
+* text=auto eol=lf
+*.sh text eol=lf

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Макияж">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fdeee6"/>
+      <stop offset="1" stop-color="#f6cfba"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#g)"/>
+  <rect x="185" y="120" width="30" height="90" rx="6" fill="none" stroke="#c56a3a" stroke-width="4"/>
+     <rect x="180" y="210" width="40" height="30" rx="6" fill="#c56a3a"/>
+     <path d="M200 120v-16" stroke="#c56a3a" stroke-width="4" stroke-linecap="round"/>
+  <text x="200" y="320" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" font-weight="600" fill="#c56a3a">Макияж</text>
+</svg>
