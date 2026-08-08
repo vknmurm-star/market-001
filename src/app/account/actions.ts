@@ -3,9 +3,12 @@
 import { redirect } from "next/navigation";
 import {
   authenticateUser,
+  changePassword,
   endSession,
   registerUser,
+  requireUser,
   startSession,
+  updateProfile,
 } from "@/lib/userAuth";
 
 function isValidEmail(email: string): boolean {
@@ -60,4 +63,50 @@ export async function loginAction(formData: FormData) {
 export async function logoutAction() {
   await endSession();
   redirect("/");
+}
+
+export async function updateProfileAction(formData: FormData) {
+  const user = await requireUser();
+  const name = String(formData.get("name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+
+  if (!name || !email) {
+    redirect(
+      "/account/settings?error=" + encodeURIComponent("Заполните имя и email"),
+    );
+  }
+  if (!isValidEmail(email)) {
+    redirect(
+      "/account/settings?error=" + encodeURIComponent("Некорректный email"),
+    );
+  }
+
+  try {
+    updateProfile(user.id, name, email);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Ошибка сохранения профиля";
+    redirect("/account/settings?error=" + encodeURIComponent(msg));
+  }
+  redirect("/account/settings?ok=profile");
+}
+
+export async function changePasswordAction(formData: FormData) {
+  const user = await requireUser();
+  const current = String(formData.get("current") ?? "");
+  const next = String(formData.get("next") ?? "");
+
+  if (next.length < 6) {
+    redirect(
+      "/account/settings?error=" +
+        encodeURIComponent("Новый пароль должен быть не короче 6 символов"),
+    );
+  }
+
+  try {
+    changePassword(user.id, current, next);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Ошибка смены пароля";
+    redirect("/account/settings?error=" + encodeURIComponent(msg));
+  }
+  redirect("/account/settings?ok=password");
 }

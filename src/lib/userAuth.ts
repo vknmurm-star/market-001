@@ -152,3 +152,61 @@ export async function requireUser(): Promise<User> {
   if (!user) redirect("/account/login");
   return user;
 }
+
+/**
+ * Обновление профиля (имя + email). Email должен быть свободен. При смене
+ * email обновляем и email в прошлых заказах пользователя, чтобы история
+ * оставалась привязанной (заказы связаны и по user_id, и по email-строке).
+ */
+export function updateProfile(
+  userId: number,
+  name: string,
+  email: string,
+): User {
+  const db = getDb();
+  const normEmail = email.trim().toLowerCase();
+
+  const taken = db
+    .prepare(`SELECT id FROM users WHERE email = ? AND id != ?`)
+    .get(normEmail, userId) as unknown as { id: number } | undefined;
+  if (taken) {
+    throw new Error("Этот email уже занят другим аккаунтом");
+  }
+
+  db.exec("BEGIN");
+  try {
+    db.prepare(`UPDATE users SET name = ?, email = ? WHERE id = ?`).run(
+      name.trim(),
+      normEmail,
+      userId,
+    );
+    db.prepare(`UPDATE orders SET email = ? WHERE user_id = ?`).run(
+      normEmail,
+      userId,
+    );
+    db.exec("COMMIT");
+  } catch (err) {
+    db.exec("ROLLBACK");
+    throw err;
+  }
+
+  const row = getUserRowById(userId);
+  if (!row) throw new Error("Пользователь не найден");
+  return toUser(row);
+}
+
+/** Смена пароля залогиненного пользователя: проверяем текущий, ставим новый. */
+export function changePassword(
+  userId: number,
+  currentPassword: string,
+  newPassword: string,
+): void {
+  const row = getUserRowById(userId);
+  if (!row) throw new Error("Пользователь не найден");
+  if (!row.password_hash || !verifyPassword(currentPassword, row.password_hash)) {
+    throw new Error("Текущий пароль указан неверно");
+  }
+  getDb()
+    .prepare(`UPDATE users SET password_hash = ? WHERE id = ?`)
+    .run(hashPassword(newPassword), userId);
+}

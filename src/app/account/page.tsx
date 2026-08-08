@@ -28,11 +28,19 @@ export default async function AccountPage() {
             {user.email}
           </p>
         </div>
-        <form action={logoutAction}>
-          <button className="rounded-full border border-accent px-5 py-2 text-sm font-semibold text-accent-dark hover:bg-accent-soft">
-            Выйти
-          </button>
-        </form>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/account/settings"
+            className="rounded-full border border-accent px-5 py-2 text-sm font-semibold text-accent-dark hover:bg-accent-soft"
+          >
+            Настройки
+          </Link>
+          <form action={logoutAction}>
+            <button className="rounded-full border border-accent px-5 py-2 text-sm font-semibold text-accent-dark hover:bg-accent-soft">
+              Выйти
+            </button>
+          </form>
+        </div>
       </div>
 
       <h2 className="mb-4 text-xl font-semibold">Мои заказы</h2>

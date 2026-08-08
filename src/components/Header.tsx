@@ -1,11 +1,33 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCart } from "@/lib/cart";
 import type { Category } from "@/lib/types";
 
 export default function Header({ categories }: { categories: Category[] }) {
   const { count, ready } = useCart();
+  const pathname = usePathname();
+  const [userName, setUserName] = useState<string | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+
+  // Статус авторизации подтягиваем на клиенте, чтобы не делать статические
+  // страницы динамическими. Перечитываем при смене маршрута (вход/выход).
+  useEffect(() => {
+    let active = true;
+    fetch("/api/me")
+      .then((r) => r.json())
+      .then((d: { user: { name: string; email: string } | null }) => {
+        if (!active) return;
+        setUserName(d.user ? d.user.name || d.user.email : null);
+        setAuthReady(true);
+      })
+      .catch(() => active && setAuthReady(true));
+    return () => {
+      active = false;
+    };
+  }, [pathname]);
 
   return (
     <header className="sticky top-0 z-40 border-b bg-card/90 backdrop-blur">
@@ -45,12 +67,23 @@ export default function Header({ categories }: { categories: Category[] }) {
           >
             Каталог
           </Link>
-          <Link
-            href="/account"
-            className="hidden text-sm font-medium hover:text-accent sm:inline"
-          >
-            Кабинет
-          </Link>
+          {authReady && userName ? (
+            <Link
+              href="/account"
+              className="hidden max-w-[10rem] items-center gap-1 truncate text-sm font-medium hover:text-accent sm:inline-flex"
+              title="Личный кабинет"
+            >
+              <span aria-hidden>👤</span>
+              <span className="truncate">{userName}</span>
+            </Link>
+          ) : (
+            <Link
+              href="/account/login"
+              className="hidden text-sm font-medium hover:text-accent sm:inline"
+            >
+              Войти
+            </Link>
+          )}
           <Link
             href="/cart"
             className="relative flex items-center gap-1 rounded-full bg-accent-soft px-4 py-2 text-sm font-medium text-accent-dark hover:bg-accent hover:text-white"
