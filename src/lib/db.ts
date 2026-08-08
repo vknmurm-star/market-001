@@ -231,6 +231,11 @@ export function getDb(): DatabaseSync {
   db = new DatabaseSync(DB_PATH);
   db.exec("PRAGMA journal_mode = WAL");
   db.exec("PRAGMA foreign_keys = ON");
+  // Unicode-понижение регистра для поиска: встроенные LIKE/lower() в SQLite
+  // работают без учёта регистра только для ASCII, кириллицу не понижают.
+  db.function("ulower", { deterministic: true }, (s: unknown) =>
+    typeof s === "string" ? s.toLowerCase() : (s as string),
+  );
   createSchema(db);
   migrateSchema(db);
 

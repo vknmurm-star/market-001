@@ -99,8 +99,16 @@ export function getProducts(filter: ProductFilter = {}): Product[] {
     params.categorySlug = filter.categorySlug;
   }
   if (filter.query && filter.query.trim()) {
-    where.push("(p.name LIKE @q OR p.description LIKE @q)");
-    params.q = `%${filter.query.trim()}%`;
+    // Регистронезависимый поиск по вхождению (в т.ч. кириллица): понижаем
+    // регистр в JS и через ulower() в SQL. Экранируем спецсимволы LIKE.
+    const q = filter.query
+      .trim()
+      .toLowerCase()
+      .replace(/[\\%_]/g, (m) => `\\${m}`);
+    where.push(
+      "(ulower(p.name) LIKE @q ESCAPE '\\' OR ulower(p.description) LIKE @q ESCAPE '\\')",
+    );
+    params.q = `%${q}%`;
   }
   if (typeof filter.minPrice === "number") {
     where.push("p.price >= @minPrice");
