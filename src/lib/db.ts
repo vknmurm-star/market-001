@@ -61,10 +61,11 @@ export function createSchema(database: DatabaseSync) {
     );
 
     CREATE TABLE IF NOT EXISTS users (
-      id         INTEGER PRIMARY KEY AUTOINCREMENT,
-      email      TEXT NOT NULL UNIQUE,
-      name       TEXT NOT NULL DEFAULT '',
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+      id            INTEGER PRIMARY KEY AUTOINCREMENT,
+      email         TEXT NOT NULL UNIQUE,
+      name          TEXT NOT NULL DEFAULT '',
+      password_hash TEXT,
+      created_at    TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
     CREATE TABLE IF NOT EXISTS orders (
@@ -96,6 +97,19 @@ export function createSchema(database: DatabaseSync) {
     CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
     CREATE INDEX IF NOT EXISTS idx_orders_email ON orders(email);
   `);
+}
+
+/**
+ * Лёгкие миграции для БД, созданных до появления новых колонок.
+ * SQLite не умеет ADD COLUMN IF NOT EXISTS — проверяем через PRAGMA.
+ */
+export function migrateSchema(database: DatabaseSync) {
+  const cols = database
+    .prepare(`PRAGMA table_info(users)`)
+    .all() as unknown as { name: string }[];
+  if (!cols.some((c) => c.name === "password_hash")) {
+    database.exec(`ALTER TABLE users ADD COLUMN password_hash TEXT`);
+  }
 }
 
 /**
@@ -184,6 +198,7 @@ export function getDb(): DatabaseSync {
   db.exec("PRAGMA journal_mode = WAL");
   db.exec("PRAGMA foreign_keys = ON");
   createSchema(db);
+  migrateSchema(db);
 
   const count = db.prepare(`SELECT COUNT(*) AS n FROM products`).get() as unknown as {
     n: number;

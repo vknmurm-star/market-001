@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createOrder } from "@/lib/orders";
+import { getCurrentUser } from "@/lib/userAuth";
 import type { PaymentMethod } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -22,9 +23,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Некорректный запрос" }, { status: 400 });
   }
 
-  const name = (body.customerName ?? "").trim();
+  // Если покупатель авторизован — заказ жёстко привязываем к email аккаунта
+  // (не доверяем email из тела запроса).
+  const sessionUser = await getCurrentUser();
+
+  const name =
+    (body.customerName ?? "").trim() || (sessionUser?.name ?? "");
   const phone = (body.phone ?? "").trim();
-  const email = (body.email ?? "").trim();
+  const email = sessionUser?.email ?? (body.email ?? "").trim();
   const address = (body.address ?? "").trim();
   const paymentMethod: PaymentMethod =
     body.paymentMethod === "online" ? "online" : "cash";
