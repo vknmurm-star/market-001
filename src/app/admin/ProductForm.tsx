@@ -14,7 +14,11 @@ export default function ProductForm({
     "w-full rounded-lg border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent";
 
   return (
-    <form action={action} className="max-w-2xl space-y-4 rounded-2xl border bg-card p-6">
+    <form
+      action={action}
+      encType="multipart/form-data"
+      className="max-w-2xl space-y-4 rounded-2xl border bg-card p-6"
+    >
       {product && <input type="hidden" name="id" value={product.id} />}
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -99,20 +103,51 @@ export default function ProductForm({
         />
       </label>
 
-      <label className="block">
-        <span className="mb-1 block text-sm font-medium">
-          Путь к изображению
-        </span>
-        <input
-          name="image"
-          defaultValue={product?.image ?? ""}
-          placeholder="/products/face-care.svg"
-          className={inputClass}
-        />
-        <span className="mt-1 block text-xs text-muted">
-          Оставьте пустым — подставится заглушка по категории.
-        </span>
-      </label>
+      <div className="space-y-2 rounded-xl border bg-background/50 p-4">
+        <span className="block text-sm font-medium">Изображение товара</span>
+        <div className="flex items-center gap-4">
+          <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg border bg-card">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={product?.image || "/products/accessories.svg"}
+              alt="Текущее изображение товара"
+              className="h-full w-full object-cover"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium">
+                Загрузить изображение
+              </span>
+              <input
+                type="file"
+                name="imageFile"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                className="block w-full text-sm text-muted file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-accent-dark"
+              />
+            </label>
+            <span className="mt-1 block text-xs text-muted">
+              JPG, PNG, WEBP или GIF, до 5 МБ. Заменит текущее изображение.
+            </span>
+          </div>
+        </div>
+
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-muted">
+            …или укажите путь вручную
+          </span>
+          <input
+            name="image"
+            defaultValue={product?.image ?? ""}
+            placeholder="/products/face-care.svg"
+            className={inputClass}
+          />
+          <span className="mt-1 block text-xs text-muted">
+            Оставьте пустым — подставится заглушка по категории. Если загрузили
+            файл выше, он имеет приоритет.
+          </span>
+        </label>
+      </div>
 
       <div className="flex items-center gap-3 pt-2">
         <button

@@ -42,13 +42,16 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   const related = getRelatedProducts(product, 4);
 
-  // второй ракурс для галереи: вставляем "-2" перед расширением, чтобы работало
-  // и с плейсхолдерами (.svg), и с реальными фото (.jpg/.png)
+  // Второй ракурс для галереи есть только у сгенерированных плейсхолдеров по
+  // SKU (/products/AC-003.svg -> /products/AC-003-2.svg). Для загруженных из
+  // админки и прочих изображений показываем одно фото (иначе миниатюра 404).
   const gallery = (() => {
-    if (!product.image) return ["/products/accessories.svg"];
-    const ext = product.image.match(/\.[a-z0-9]+$/i)?.[0] ?? "";
-    const base = ext ? product.image.slice(0, -ext.length) : product.image;
-    return [product.image, `${base}-2${ext}`];
+    const img = product.image;
+    if (!img) return ["/products/accessories.svg"];
+    if (/^\/products\/[A-Za-z]{2}-\d+\.svg$/.test(img)) {
+      return [img, img.replace(/\.svg$/, "-2.svg")];
+    }
+    return [img];
   })();
 
   const productJsonLd = {

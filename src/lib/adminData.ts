@@ -1,6 +1,37 @@
+import fs from "node:fs";
+import path from "node:path";
 import { getDb } from "./db";
 import { slugify } from "./slug";
 import type { Category } from "./types";
+
+const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+const ALLOWED_TYPES: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+};
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5 МБ
+
+/**
+ * Сохраняет загруженный файл изображения в public/uploads и возвращает его
+ * публичный путь (/uploads/<файл>) или null, если файл не подходит (тип/размер).
+ */
+export async function saveUploadedImage(
+  file: File,
+  sku: string,
+): Promise<string | null> {
+  const ext = ALLOWED_TYPES[file.type];
+  if (!ext) return null;
+  if (file.size <= 0 || file.size > MAX_UPLOAD_BYTES) return null;
+
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  const safe = sku.replace(/[^a-zA-Z0-9_-]/g, "").toLowerCase() || "product";
+  const name = `${safe}-${Date.now()}.${ext}`;
+  const buf = Buffer.from(await file.arrayBuffer());
+  fs.writeFileSync(path.join(UPLOAD_DIR, name), buf);
+  return `/uploads/${name}`;
+}
 
 export interface ProductInput {
   sku: string;

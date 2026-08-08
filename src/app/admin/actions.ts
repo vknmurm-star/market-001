@@ -6,6 +6,7 @@ import { isAdminAuthed, signInAdmin, signOutAdmin } from "@/lib/adminAuth";
 import {
   createProduct,
   deleteProduct,
+  saveUploadedImage,
   updateProduct,
   type ProductInput,
 } from "@/lib/adminData";
@@ -46,9 +47,20 @@ function parseProduct(formData: FormData): ProductInput {
   };
 }
 
+/** Если админ загрузил файл — сохраняем его и подменяем путь к изображению. */
+async function applyUploadedImage(formData: FormData, input: ProductInput) {
+  const file = formData.get("imageFile");
+  if (file instanceof File && file.size > 0) {
+    const saved = await saveUploadedImage(file, input.sku);
+    if (saved) input.image = saved;
+  }
+}
+
 export async function createProductAction(formData: FormData) {
   await ensureAuthed();
-  createProduct(parseProduct(formData));
+  const input = parseProduct(formData);
+  await applyUploadedImage(formData, input);
+  createProduct(input);
   revalidatePath("/admin");
   redirect("/admin");
 }
@@ -56,7 +68,9 @@ export async function createProductAction(formData: FormData) {
 export async function updateProductAction(formData: FormData) {
   await ensureAuthed();
   const id = Number(formData.get("id"));
-  updateProduct(id, parseProduct(formData));
+  const input = parseProduct(formData);
+  await applyUploadedImage(formData, input);
+  updateProduct(id, input);
   revalidatePath("/admin");
   redirect("/admin");
 }

@@ -20,6 +20,9 @@
 /data/*.db-shm
 /data/*.db-wal
 
+# загруженные из админки изображения товаров (не в git, живут на сервере)
+/public/uploads/
+
 # misc
 .DS_Store
 *.pem
