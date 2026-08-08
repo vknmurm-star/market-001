@@ -27,7 +27,9 @@ export async function saveUploadedImage(
 
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
   const safe = sku.replace(/[^a-zA-Z0-9_-]/g, "").toLowerCase() || "product";
-  const name = `${safe}-${Date.now()}.${ext}`;
+  // случайный суффикс — чтобы несколько файлов в одном запросе не столкнулись
+  const rand = Math.random().toString(36).slice(2, 8);
+  const name = `${safe}-${Date.now()}-${rand}.${ext}`;
   const buf = Buffer.from(await file.arrayBuffer());
   fs.writeFileSync(path.join(UPLOAD_DIR, name), buf);
   return `/uploads/${name}`;
