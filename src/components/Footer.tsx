@@ -29,13 +29,18 @@ export default function Footer({ categories }: { categories: Category[] }) {
           <div className="mb-2 text-sm font-semibold">Покупателям</div>
           <ul className="space-y-1 text-sm text-muted">
             <li>
-              <Link href="/catalog" className="hover:text-accent">
-                Весь каталог
+              <Link href="/about" className="hover:text-accent">
+                О магазине
               </Link>
             </li>
             <li>
-              <Link href="/cart" className="hover:text-accent">
-                Корзина
+              <Link href="/delivery" className="hover:text-accent">
+                Доставка и оплата
+              </Link>
+            </li>
+            <li>
+              <Link href="/contacts" className="hover:text-accent">
+                Контакты
               </Link>
             </li>
             <li>
@@ -48,6 +53,7 @@ export default function Footer({ categories }: { categories: Category[] }) {
         <div>
           <div className="mb-2 text-sm font-semibold">Контакты</div>
           <ul className="space-y-1 text-sm text-muted">
+            <li>8 800 000-00-00</li>
             <li>Пн–Вс, 9:00–21:00</li>
             <li>Доставка по России</li>
             <li className="text-xs">

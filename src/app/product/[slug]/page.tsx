@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getProductBySlug, getRelatedProducts } from "@/lib/catalog";
 import { absoluteUrl, formatPrice, SITE_NAME, SITE_URL } from "@/lib/site";
 import PriceTag from "@/components/PriceTag";
 import AddToCartButton from "@/components/AddToCartButton";
 import ProductGrid from "@/components/ProductGrid";
+import ProductGallery from "@/components/ProductGallery";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const dynamic = "force-dynamic";
@@ -42,6 +42,10 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   const related = getRelatedProducts(product, 4);
 
+  const gallery = product.image
+    ? [product.image, product.image.replace(/\.svg$/, "-2.svg")]
+    : ["/products/accessories.svg"];
+
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -77,16 +81,10 @@ export default async function ProductPage({ params }: { params: Params }) {
       />
 
       <div className="mt-6 grid gap-8 md:grid-cols-2">
-        <div className="relative aspect-square overflow-hidden rounded-3xl border bg-card">
-          <Image
-            src={product.image ?? "/products/accessories.svg"}
-            alt={`${product.name} — ${product.categoryName}`}
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover"
-          />
-        </div>
+        <ProductGallery
+          images={gallery}
+          alt={`${product.name} — ${product.categoryName}`}
+        />
 
         <div className="flex flex-col">
           <span className="text-sm uppercase tracking-wide text-muted">

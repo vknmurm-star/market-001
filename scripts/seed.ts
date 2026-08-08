@@ -96,7 +96,7 @@ seed.products.forEach((p, i) => {
   const res = insertProduct.run({
     sku: p.sku, slug: unique, name: p.name, categoryId: cat.id, price: p.price,
     oldPrice: p.old_price ?? null, description: p.description, stock: p.stock,
-    image: `/products/${p.category}.svg`,
+    image: `/products/${p.sku}.svg`,
     popularity: p.stock + ((seed.products.length - i) % 7),
   });
   if (Number(res.changes) > 0) added++;

@@ -1,14 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/types";
+import { productBadges } from "@/lib/badges";
 import PriceTag from "./PriceTag";
 import AddToCartButton from "./AddToCartButton";
 
 export default function ProductCard({ product }: { product: Product }) {
-  const discount =
-    product.oldPrice && product.oldPrice > product.price
-      ? Math.round((1 - product.price / product.oldPrice) * 100)
-      : 0;
+  const { discount, isHit, isNew } = productBadges(product);
 
   return (
     <div className="group flex flex-col overflow-hidden rounded-2xl border bg-card transition hover:shadow-lg">
@@ -16,11 +14,23 @@ export default function ProductCard({ product }: { product: Product }) {
         href={`/product/${product.slug}`}
         className="relative block aspect-square overflow-hidden bg-background"
       >
-        {discount > 0 && (
-          <span className="absolute left-3 top-3 z-10 rounded-full bg-accent px-2 py-1 text-xs font-bold text-white">
-            −{discount}%
-          </span>
-        )}
+        <div className="absolute left-3 top-3 z-10 flex flex-col gap-1">
+          {discount > 0 && (
+            <span className="w-fit rounded-full bg-accent px-2 py-1 text-xs font-bold text-white">
+              −{discount}%
+            </span>
+          )}
+          {isHit && (
+            <span className="w-fit rounded-full bg-amber-500 px-2 py-1 text-xs font-bold text-white">
+              Хит
+            </span>
+          )}
+          {isNew && (
+            <span className="w-fit rounded-full bg-success px-2 py-1 text-xs font-bold text-white">
+              Новинка
+            </span>
+          )}
+        </div>
         <Image
           src={product.image ?? "/products/accessories.svg"}
           alt={`${product.name} — ${product.categoryName}`}

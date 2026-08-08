@@ -38,6 +38,29 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Преимущества */}
+      <section className="mb-12 grid grid-cols-2 gap-4 md:grid-cols-4">
+        {[
+          ["🚚", "Доставка по России", "Курьером или самовывоз"],
+          ["💳", "Удобная оплата", "Онлайн или при получении"],
+          ["🧴", "Большой выбор", "Косметика в 6 категориях"],
+          ["↩️", "Возврат 14 дней", "Если товар не подошёл"],
+        ].map(([icon, title, sub]) => (
+          <div
+            key={title}
+            className="flex items-start gap-3 rounded-2xl border bg-card p-4"
+          >
+            <span className="text-2xl" aria-hidden>
+              {icon}
+            </span>
+            <div>
+              <div className="text-sm font-semibold leading-tight">{title}</div>
+              <div className="mt-0.5 text-xs text-muted">{sub}</div>
+            </div>
+          </div>
+        ))}
+      </section>
+
       {/* Категории */}
       <section className="mb-12">
         <h2 className="mb-5 text-2xl font-bold">Категории</h2>

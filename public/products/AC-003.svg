@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Массажный роллер для лица из кварца">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="hsl(202 55% 94%)"/>
+      <stop offset="1" stop-color="hsl(202 45% 86%)"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#g)"/>
+  <circle cx="320" cy="80" r="60" fill="#ffffff" opacity="0.18"/>
+  <circle cx="70" cy="330" r="42" fill="#ffffff" opacity="0.14"/>
+  
+        <rect x="168" y="120" width="64" height="150" rx="10" fill="hsl(202 66% 62%)"/>
+        <rect x="168" y="120" width="64" height="26" rx="10" fill="hsl(202 66% 48%)"/>
+        <rect x="184" y="96" width="32" height="26" rx="6" fill="hsl(202 66% 48%)"/>
+        <rect x="180" y="180" width="40" height="8" rx="4" fill="#ffffff" opacity="0.4"/>
+  <text x="200" y="330" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="hsl(202 40% 32%)">Массажный роллер</text>
+</svg>

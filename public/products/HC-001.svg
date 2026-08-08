@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Шампунь для окрашенных волос">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="hsl(204 55% 94%)"/>
+      <stop offset="1" stop-color="hsl(204 45% 86%)"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#g)"/>
+  <circle cx="320" cy="80" r="60" fill="#ffffff" opacity="0.18"/>
+  <circle cx="70" cy="330" r="42" fill="#ffffff" opacity="0.14"/>
+  
+        <rect x="170" y="140" width="60" height="130" rx="18" fill="hsl(204 52% 62%)"/>
+        <rect x="184" y="112" width="32" height="30" rx="8" fill="hsl(204 52% 48%)"/>
+        <rect x="180" y="180" width="40" height="54" rx="8" fill="#ffffff" opacity="0.85"/>
+  <text x="200" y="330" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="hsl(204 40% 32%)">Шампунь для</text>
+</svg>
