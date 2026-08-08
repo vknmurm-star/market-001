@@ -50,10 +50,14 @@ ADMIN_PASSWORD=<надёжный пароль администратора>
 
 ## 4. PM2 и nginx
 
-- PM2-процесс называется **`market-store`**, Next.js слушает порт **3000**.
-  Не переименовывай процесс и не меняй порт без явной просьбы.
-- nginx — reverse proxy на `localhost:3000` с обязательными заголовками
-  `X-Forwarded-*` (см. skill). certbot на стандартном 443.
+- PM2-процесс называется **`market-store`**, Next.js слушает порт **3001**
+  (порт 3000 занят site-001!). Порт задаётся при старте: `PORT=3001 pm2 start
+  npm --name market-store -- start`, затем `pm2 save`. Не переименовывай процесс
+  и не меняй порт без явной просьбы.
+- nginx — reverse proxy на `localhost:3001` с обязательными заголовками
+  `X-Forwarded-*` (конфиг `/etc/nginx/sites-available/market-store`). certbot на
+  стандартном 443, http→https редирект. Конфиг site-001/beauty.an51.su —
+  отдельный файл, market его не трогает.
 
 ## 5. Процесс деплоя
 
