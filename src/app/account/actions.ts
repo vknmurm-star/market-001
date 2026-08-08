@@ -129,6 +129,7 @@ export async function resetAction(formData: FormData) {
   if (isBot(formData)) redirect("/");
   const token = String(formData.get("token") ?? "");
   const next = String(formData.get("next") ?? "");
+  const next2 = String(formData.get("next2") ?? "");
 
   const backToReset = (msg: string) =>
     redirect(
@@ -138,6 +139,7 @@ export async function resetAction(formData: FormData) {
 
   if (!token) redirect("/account/forgot");
   if (next.length < 6) backToReset("Пароль должен быть не короче 6 символов");
+  if (next !== next2) backToReset("Пароли не совпадают");
 
   const email = consumePasswordReset(token, next);
   if (!email) {
