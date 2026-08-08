@@ -44,6 +44,7 @@ export async function registerAction(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const password2 = String(formData.get("password2") ?? "");
 
   if (!name || !email || !password) {
     redirect("/account/register?error=" + encodeURIComponent("Заполните все поля"));
@@ -55,6 +56,11 @@ export async function registerAction(formData: FormData) {
     redirect(
       "/account/register?error=" +
         encodeURIComponent("Пароль должен быть не короче 6 символов"),
+    );
+  }
+  if (password !== password2) {
+    redirect(
+      "/account/register?error=" + encodeURIComponent("Пароли не совпадают"),
     );
   }
 
@@ -177,11 +183,17 @@ export async function changePasswordAction(formData: FormData) {
   const user = await requireUser();
   const current = String(formData.get("current") ?? "");
   const next = String(formData.get("next") ?? "");
+  const next2 = String(formData.get("next2") ?? "");
 
   if (next.length < 6) {
     redirect(
       "/account/settings?error=" +
         encodeURIComponent("Новый пароль должен быть не короче 6 символов"),
+    );
+  }
+  if (next !== next2) {
+    redirect(
+      "/account/settings?error=" + encodeURIComponent("Пароли не совпадают"),
     );
   }
 

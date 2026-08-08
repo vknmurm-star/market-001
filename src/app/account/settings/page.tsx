@@ -115,6 +115,19 @@ export default async function SettingsPage({
             />
             <span className="mt-1 block text-xs text-muted">Минимум 6 символов.</span>
           </label>
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium">
+              Повторите новый пароль
+            </span>
+            <input
+              name="next2"
+              type="password"
+              required
+              minLength={6}
+              className={inputClass}
+              autoComplete="new-password"
+            />
+          </label>
           <button
             type="submit"
             className="rounded-full bg-accent px-6 py-2.5 font-semibold text-white hover:bg-accent-dark"
