@@ -24,7 +24,7 @@ export interface Product {
 
 export type OrderStatus = "new" | "processing" | "done";
 
-export type PaymentMethod = "online" | "cash";
+export type PaymentMethod = "online" | "sbp" | "cash";
 
 export interface OrderItem {
   id: number;
@@ -66,6 +66,7 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
 };
 
 export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
-  online: "Онлайн-оплата (ЮKassa, тестовый режим)",
+  online: "Онлайн-оплата картой (ЮKassa, тестовый режим)",
+  sbp: "СБП — Система быстрых платежей (тестовый режим)",
   cash: "При получении",
 };

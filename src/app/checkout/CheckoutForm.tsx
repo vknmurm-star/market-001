@@ -7,7 +7,7 @@ import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/site";
 import Honeypot from "@/components/Honeypot";
 
-type Payment = "online" | "cash";
+type Payment = "online" | "sbp" | "cash";
 
 export default function CheckoutForm({
   initialName = "",
@@ -169,6 +169,20 @@ export default function CheckoutForm({
                 Онлайн-оплата картой
                 <span className="ml-1 rounded bg-accent-soft px-1.5 py-0.5 text-xs text-accent-dark">
                   ЮKassa · тестовый режим
+                </span>
+              </span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 hover:border-accent">
+              <input
+                type="radio"
+                name="payment"
+                checked={payment === "sbp"}
+                onChange={() => setPayment("sbp")}
+              />
+              <span className="text-sm">
+                СБП — оплата по QR из банковского приложения
+                <span className="ml-1 rounded bg-accent-soft px-1.5 py-0.5 text-xs text-accent-dark">
+                  тестовый режим
                 </span>
               </span>
             </label>

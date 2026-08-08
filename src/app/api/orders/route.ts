@@ -53,7 +53,9 @@ export async function POST(req: Request) {
   const email = sessionUser?.email ?? (body.email ?? "").trim();
   const address = (body.address ?? "").trim();
   const paymentMethod: PaymentMethod =
-    body.paymentMethod === "online" ? "online" : "cash";
+    body.paymentMethod === "online" || body.paymentMethod === "sbp"
+      ? body.paymentMethod
+      : "cash";
 
   if (!name || !phone || !email) {
     return NextResponse.json(
