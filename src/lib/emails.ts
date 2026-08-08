@@ -91,6 +91,35 @@ export async function sendAdminNewOrder(order: Order): Promise<boolean> {
   });
 }
 
+export async function sendPasswordReset(
+  email: string,
+  resetUrl: string,
+): Promise<boolean> {
+  const body = `
+    <p>Вы запросили сброс пароля в магазине ${SITE_NAME}.</p>
+    <p>Чтобы задать новый пароль, перейдите по ссылке (действует 1 час):</p>
+    <p style="margin:16px 0">
+      <a href="${resetUrl}"
+         style="display:inline-block;background:#c9497a;color:#fff;text-decoration:none;padding:10px 20px;border-radius:999px">
+        Задать новый пароль
+      </a>
+    </p>
+    <p style="font-size:13px;color:#7a6f74">
+      Если кнопка не работает, скопируйте ссылку в браузер:<br/>
+      <span style="word-break:break-all">${resetUrl}</span>
+    </p>
+    <p style="font-size:13px;color:#7a6f74">
+      Если вы не запрашивали сброс — просто проигнорируйте это письмо, пароль
+      останется прежним.
+    </p>`;
+  return sendMail({
+    to: email,
+    subject: `Сброс пароля — ${SITE_NAME}`,
+    html: layout("Сброс пароля", body),
+    text: `Сброс пароля в ${SITE_NAME}. Ссылка (1 час): ${resetUrl}`,
+  });
+}
+
 export async function sendWelcome(name: string, email: string): Promise<boolean> {
   const body = `
     <p>Здравствуйте${name ? `, ${name}` : ""}!</p>

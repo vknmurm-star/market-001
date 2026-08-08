@@ -5,13 +5,16 @@ import { headers } from "next/headers";
 import {
   authenticateUser,
   changePassword,
+  consumePasswordReset,
+  createPasswordReset,
   endSession,
   registerUser,
   requireUser,
   startSession,
   updateProfile,
 } from "@/lib/userAuth";
-import { sendWelcome } from "@/lib/emails";
+import { sendPasswordReset, sendWelcome } from "@/lib/emails";
+import { SITE_URL } from "@/lib/site";
 import { clientIp, maybeCleanup, rateLimit } from "@/lib/rateLimit";
 
 function isValidEmail(email: string): boolean {
@@ -97,6 +100,50 @@ export async function loginAction(formData: FormData) {
 export async function logoutAction() {
   await endSession();
   redirect("/");
+}
+
+export async function forgotAction(formData: FormData) {
+  if (isBot(formData)) redirect("/account/forgot?sent=1");
+  maybeCleanup();
+  const rl = rateLimit(`forgot:${await ip()}`, 5, 60 * 60 * 1000);
+  if (!rl.ok) {
+    redirect(
+      "/account/forgot?error=" +
+        encodeURIComponent("Слишком много попыток. Попробуйте позже."),
+    );
+  }
+
+  const email = String(formData.get("email") ?? "").trim();
+  if (isValidEmail(email)) {
+    const token = createPasswordReset(email);
+    if (token) {
+      const url = `${SITE_URL}/account/reset?token=${token}`;
+      await sendPasswordReset(email, url);
+    }
+  }
+  // Всегда одинаковый ответ — не раскрываем, есть ли такой email.
+  redirect("/account/forgot?sent=1");
+}
+
+export async function resetAction(formData: FormData) {
+  if (isBot(formData)) redirect("/");
+  const token = String(formData.get("token") ?? "");
+  const next = String(formData.get("next") ?? "");
+
+  const backToReset = (msg: string) =>
+    redirect(
+      `/account/reset?token=${encodeURIComponent(token)}&error=` +
+        encodeURIComponent(msg),
+    );
+
+  if (!token) redirect("/account/forgot");
+  if (next.length < 6) backToReset("Пароль должен быть не короче 6 символов");
+
+  const email = consumePasswordReset(token, next);
+  if (!email) {
+    backToReset("Ссылка недействительна или устарела. Запросите сброс заново.");
+  }
+  redirect("/account/login?reset=1");
 }
 
 export async function updateProfileAction(formData: FormData) {

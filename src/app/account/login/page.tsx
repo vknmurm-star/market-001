@@ -25,6 +25,7 @@ export default async function LoginPage({
   if (await getCurrentUser()) redirect("/account");
   const sp = await searchParams;
   const error = typeof sp.error === "string" ? sp.error : "";
+  const reset = sp.reset === "1";
 
   return (
     <div className="container-page py-12">
@@ -33,6 +34,12 @@ export default async function LoginPage({
         <p className="mt-1 text-sm text-muted">
           Войдите, чтобы видеть свои заказы.
         </p>
+
+        {reset && (
+          <p className="mt-4 rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-sm text-success">
+            Пароль изменён. Войдите с новым паролем.
+          </p>
+        )}
 
         <form action={loginAction} className="mt-6 space-y-4">
           <Honeypot />
@@ -47,7 +54,15 @@ export default async function LoginPage({
             />
           </label>
           <label className="block">
-            <span className="mb-1 block text-sm font-medium">Пароль</span>
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-sm font-medium">Пароль</span>
+              <Link
+                href="/account/forgot"
+                className="text-xs text-accent hover:underline"
+              >
+                Забыли пароль?
+              </Link>
+            </div>
             <input
               name="password"
               type="password"

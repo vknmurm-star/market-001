@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
+  createHash,
   createHmac,
   randomBytes,
   scryptSync,
@@ -193,6 +194,73 @@ export function updateProfile(
   const row = getUserRowById(userId);
   if (!row) throw new Error("Пользователь не найден");
   return toUser(row);
+}
+
+function sha256(v: string): string {
+  return createHash("sha256").update(v).digest("hex");
+}
+
+/**
+ * Создаёт токен сброса пароля для email (если такой зарегистрированный
+ * пользователь есть). В БД хранится только хэш токена; сырой токен
+ * возвращается для отправки ссылкой. TTL 1 час, single-use. Если
+ * пользователя нет или у него нет пароля — возвращает null (наружу всё равно
+ * показываем одинаковый ответ, чтобы не раскрывать наличие email).
+ */
+export function createPasswordReset(email: string): string | null {
+  const db = getDb();
+  const row = getUserRowByEmail(email);
+  if (!row || !row.password_hash) return null;
+
+  const token = randomBytes(32).toString("hex");
+  // старые неиспользованные токены этого пользователя гасим
+  db.prepare(`UPDATE password_resets SET used = 1 WHERE user_id = ? AND used = 0`).run(
+    row.id,
+  );
+  db.prepare(
+    `INSERT INTO password_resets (user_id, token_hash, expires_at)
+     VALUES (?, ?, datetime('now', '+1 hour'))`,
+  ).run(row.id, sha256(token));
+  return token;
+}
+
+/**
+ * Погашает токен: если валиден (не использован, не истёк) — ставит новый
+ * пароль пользователю и помечает токен использованным. Возвращает email
+ * пользователя при успехе (для авто-логина/сообщения) или null.
+ */
+export function consumePasswordReset(
+  token: string,
+  newPassword: string,
+): string | null {
+  const db = getDb();
+  const reset = db
+    .prepare(
+      `SELECT id, user_id FROM password_resets
+       WHERE token_hash = ? AND used = 0 AND expires_at > datetime('now')
+       ORDER BY id DESC LIMIT 1`,
+    )
+    .get(sha256(token)) as unknown as { id: number; user_id: number } | undefined;
+  if (!reset) return null;
+
+  db.exec("BEGIN");
+  try {
+    db.prepare(`UPDATE users SET password_hash = ? WHERE id = ?`).run(
+      hashPassword(newPassword),
+      reset.user_id,
+    );
+    // гасим все токены сброса этого пользователя
+    db.prepare(`UPDATE password_resets SET used = 1 WHERE user_id = ?`).run(
+      reset.user_id,
+    );
+    db.exec("COMMIT");
+  } catch (err) {
+    db.exec("ROLLBACK");
+    throw err;
+  }
+
+  const user = getUserRowById(reset.user_id);
+  return user ? user.email : null;
 }
 
 /** Смена пароля залогиненного пользователя: проверяем текущий, ставим новый. */
