@@ -64,6 +64,16 @@ rate-limit по IP. Для IP за nginx нужны заголовки `X-Forwar
   (`mapProduct`/`mapCategory` в `src/lib/catalog.ts`, `mapOrder` в
   `src/lib/orders.ts`). Касты через `as unknown as T`.
 
+## 3b. Загрузка изображений товаров (админка)
+
+Админка позволяет загружать картинку товара (`ProductForm` → `input[type=file]`,
+серверный экшен → `saveUploadedImage` в `src/lib/adminData.ts`). Файлы кладутся в
+`public/uploads/` (в `.gitignore`, переживают деплой как untracked). **Важно:**
+`next start` НЕ раздаёт файлы, добавленные в `public/` после сборки (404),
+поэтому отдаём их через рантайм-роут `src/app/uploads/[...path]/route.ts`
+(читает с диска, отдаёт с Content-Type, есть защита от path traversal). Не
+заменяй этот роут на «просто public» — сломается отдача загруженных файлов.
+
 ## 4. PM2 и nginx
 
 - PM2-процесс называется **`market-store`**, Next.js слушает порт **3001**
