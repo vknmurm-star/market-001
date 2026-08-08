@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/lib/cart";
 import { getCategories } from "@/lib/catalog";
+import { getSetting } from "@/lib/settings";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -55,6 +56,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const categories = getCategories();
+  const logo = getSetting("site_logo");
 
   return (
     <html lang="ru" className="h-full">
@@ -66,7 +68,7 @@ export default function RootLayout({
           >
             Перейти к содержимому
           </a>
-          <Header categories={categories} />
+          <Header categories={categories} logo={logo} />
           <main id="main" className="flex-1">
             {children}
           </main>

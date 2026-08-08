@@ -36,6 +36,24 @@ export async function saveUploadedImage(
   return `/uploads/${name}`;
 }
 
+const LOGO_TYPES: Record<string, string> = {
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/webp": "webp",
+  "image/svg+xml": "svg",
+};
+
+/** Сохраняет логотип в public/uploads. Возвращает публичный путь или null. */
+export async function saveLogoFile(file: File): Promise<string | null> {
+  const ext = LOGO_TYPES[file.type];
+  if (!ext) return null;
+  if (file.size <= 0 || file.size > 2 * 1024 * 1024) return null; // до 2 МБ
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  const name = `logo-${Date.now()}.${ext}`;
+  fs.writeFileSync(path.join(UPLOAD_DIR, name), Buffer.from(await file.arrayBuffer()));
+  return `/uploads/${name}`;
+}
+
 /** Удаляет файл из public/uploads по публичному пути (безопасно, без traversal). */
 export function deleteUploadFile(p: string | null | undefined): void {
   if (!p || !p.startsWith("/uploads/")) return;

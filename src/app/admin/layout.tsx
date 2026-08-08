@@ -31,6 +31,9 @@ export default async function AdminLayout({
               <Link href="/admin/products/new" className="hover:text-accent">
                 + Добавить товар
               </Link>
+              <Link href="/admin/settings" className="hover:text-accent">
+                Настройки
+              </Link>
             </nav>
             <form action={logoutAction} className="ml-auto">
               <button className="text-sm text-muted hover:text-accent">Выйти</button>

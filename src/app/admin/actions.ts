@@ -9,13 +9,16 @@ import {
   createProduct,
   deleteProduct,
   deleteProductImage,
+  deleteUploadFile,
   MAX_PRODUCT_IMAGES,
   reorderProductImages,
+  saveLogoFile,
   saveUploadedImage,
   syncMainImage,
   updateProduct,
   type ProductInput,
 } from "@/lib/adminData";
+import { getSetting, setSetting } from "@/lib/settings";
 import { updateOrderStatus } from "@/lib/orders";
 import type { OrderStatus } from "@/lib/types";
 
@@ -124,6 +127,35 @@ export async function deleteProductAction(formData: FormData) {
   const id = Number(formData.get("id"));
   deleteProduct(id);
   revalidatePath("/admin");
+}
+
+export async function uploadLogoAction(formData: FormData) {
+  await ensureAuthed();
+  const file = formData.get("logoFile");
+  if (!(file instanceof File) || file.size === 0) {
+    redirect("/admin/settings?error=" + encodeURIComponent("Выберите файл"));
+  }
+  const saved = await saveLogoFile(file as File);
+  if (!saved) {
+    redirect(
+      "/admin/settings?error=" +
+        encodeURIComponent("Неподдерживаемый формат или файл больше 2 МБ"),
+    );
+  }
+  const old = getSetting("site_logo");
+  setSetting("site_logo", saved);
+  if (old && old !== saved) deleteUploadFile(old);
+  revalidatePath("/", "layout"); // логотип в шапке на всех страницах
+  redirect("/admin/settings?ok=logo");
+}
+
+export async function removeLogoAction() {
+  await ensureAuthed();
+  const old = getSetting("site_logo");
+  setSetting("site_logo", null);
+  if (old) deleteUploadFile(old);
+  revalidatePath("/", "layout");
+  redirect("/admin/settings?ok=removed");
 }
 
 export async function setOrderStatusAction(formData: FormData) {

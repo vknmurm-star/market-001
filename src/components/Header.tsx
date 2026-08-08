@@ -6,7 +6,13 @@ import { usePathname } from "next/navigation";
 import { useCart } from "@/lib/cart";
 import type { Category } from "@/lib/types";
 
-export default function Header({ categories }: { categories: Category[] }) {
+export default function Header({
+  categories,
+  logo,
+}: {
+  categories: Category[];
+  logo?: string | null;
+}) {
   const { count, ready } = useCart();
   const pathname = usePathname();
   const [userName, setUserName] = useState<string | null>(null);
@@ -29,20 +35,48 @@ export default function Header({ categories }: { categories: Category[] }) {
     };
   }, [pathname]);
 
+  const isActive = (href: string, exact = false) =>
+    exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+
+  // подчёркивание для текстовых пунктов верхнего меню
+  const navLink = (active: boolean) =>
+    `hidden border-b-2 pb-0.5 text-sm font-medium transition-colors sm:inline ${
+      active
+        ? "border-accent text-accent"
+        : "border-transparent hover:text-accent"
+    } focus-visible:outline-none focus-visible:text-accent`;
+
+  const accountActive = isActive("/account");
+
   return (
-    <header className="sticky top-0 z-40 border-b bg-card/90 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b bg-card/90 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="container-page flex items-center gap-4 py-3">
-        <Link href="/" className="flex items-baseline gap-2 shrink-0">
-          <span className="text-2xl font-bold tracking-tight text-accent">
+        <Link
+          href="/"
+          aria-label="Маркет — на главную"
+          className="flex shrink-0 items-center gap-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          {logo && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={logo}
+              alt=""
+              className="h-9 w-auto max-h-9 object-contain"
+            />
+          )}
+          <span className="text-2xl font-bold leading-none tracking-tight text-accent">
             Маркет
           </span>
-          <span className="hidden text-sm text-muted sm:inline">
-            косметика и красота
-          </span>
+          {!logo && (
+            <span className="hidden text-sm text-muted sm:inline">
+              косметика и красота
+            </span>
+          )}
         </Link>
 
         <form
           action="/catalog"
+          role="search"
           className="ml-auto hidden max-w-md flex-1 items-center md:flex"
         >
           <input
@@ -50,47 +84,50 @@ export default function Header({ categories }: { categories: Category[] }) {
             name="q"
             placeholder="Поиск товаров…"
             aria-label="Поиск товаров"
-            className="w-full rounded-l-full border border-r-0 bg-background px-4 py-2 text-sm outline-none focus:border-accent"
+            className="w-full rounded-l-full border border-r-0 bg-background px-4 py-2 text-sm outline-none transition focus:border-accent"
           />
           <button
             type="submit"
-            className="rounded-r-full border border-l-0 border-accent bg-accent px-4 py-2 text-sm font-medium text-white"
+            className="rounded-r-full border border-l-0 border-accent bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1"
           >
             Найти
           </button>
         </form>
 
-        <nav className="ml-auto flex items-center gap-4 md:ml-4">
-          <Link
-            href="/catalog"
-            className="hidden text-sm font-medium hover:text-accent sm:inline"
-          >
+        <nav className="ml-auto flex items-center gap-5 md:ml-4">
+          <Link href="/catalog" className={navLink(isActive("/catalog", true))}>
             Каталог
           </Link>
           {authReady && userName ? (
             <Link
               href="/account"
-              className="hidden max-w-[10rem] items-center gap-1 truncate text-sm font-medium hover:text-accent sm:inline-flex"
               title="Личный кабинет"
+              className={`hidden max-w-[10rem] items-center gap-1 border-b-2 pb-0.5 text-sm font-medium transition-colors sm:inline-flex ${
+                accountActive
+                  ? "border-accent text-accent"
+                  : "border-transparent hover:text-accent"
+              }`}
             >
               <span aria-hidden>👤</span>
               <span className="truncate">{userName}</span>
             </Link>
           ) : (
-            <Link
-              href="/account/login"
-              className="hidden text-sm font-medium hover:text-accent sm:inline"
-            >
+            <Link href="/account/login" className={navLink(accountActive)}>
               Войти
             </Link>
           )}
           <Link
             href="/cart"
-            className="relative flex items-center gap-1 rounded-full bg-accent-soft px-4 py-2 text-sm font-medium text-accent-dark hover:bg-accent hover:text-white"
+            aria-current={isActive("/cart", true) ? "page" : undefined}
+            className={`relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 ${
+              isActive("/cart", true)
+                ? "bg-accent text-white"
+                : "bg-accent-soft text-accent-dark hover:bg-accent hover:text-white"
+            }`}
           >
             Корзина
             {ready && count > 0 && (
-              <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs font-bold text-white">
+              <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 text-xs font-bold text-accent">
                 {count}
               </span>
             )}
@@ -99,17 +136,28 @@ export default function Header({ categories }: { categories: Category[] }) {
       </div>
 
       <div className="border-t bg-background/60">
-        <div className="container-page flex gap-4 overflow-x-auto py-2 text-sm">
-          {categories.map((c) => (
-            <Link
-              key={c.slug}
-              href={`/catalog/${c.slug}`}
-              className="whitespace-nowrap text-muted hover:text-accent"
-            >
-              {c.name}
-            </Link>
-          ))}
-        </div>
+        <nav
+          aria-label="Категории"
+          className="container-page flex gap-5 overflow-x-auto text-sm"
+        >
+          {categories.map((c) => {
+            const active = isActive(`/catalog/${c.slug}`, true);
+            return (
+              <Link
+                key={c.slug}
+                href={`/catalog/${c.slug}`}
+                aria-current={active ? "page" : undefined}
+                className={`whitespace-nowrap border-b-2 py-2.5 transition-colors focus-visible:outline-none ${
+                  active
+                    ? "border-accent font-medium text-accent"
+                    : "border-transparent text-muted hover:text-accent"
+                }`}
+              >
+                {c.name}
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </header>
   );
