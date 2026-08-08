@@ -60,6 +60,26 @@
 - **AC-002** — a set of 8 makeup brushes fanned out with a storage case
 - **AC-003** — a rose quartz facial roller, pale pink natural stone
 
+## Промпты по категориям (обложки витрины)
+
+Тот же студийный стиль, но композиция — аккуратная раскладка нескольких товаров
+категории (flat lay), а не один предмет. Скрипт `generate-category-images.mjs`
+парсит строки ниже (`**<slug>** — <subject>`) и добавляет общий стиль:
+`professional product photography, flat lay composition, clean seamless studio
+background, soft diffused lighting, gentle soft shadows, high detail,
+photorealistic, square 1:1 composition, no text, no letters, no logos, no brand
+names, plain unbranded generic packaging`.
+
+- **face-care** — an elegant flat lay of facial skincare products — a white cream jar, an amber serum dropper bottle and a pastel tube — on a soft blush pink background
+- **body-care** — an elegant flat lay of body care products — a glass body oil bottle, an open scrub jar and a hand cream tube — on a soft mint green background
+- **hair-care** — an elegant flat lay of hair care products — a shampoo bottle, a hair mask jar and a spray bottle — on a soft periwinkle blue background
+- **makeup** — an elegant flat lay of makeup products — a foundation bottle, a mascara, an open eyeshadow palette and a lipstick — on a warm peach background
+- **perfume** — an elegant arrangement of several perfume glass flacons of different shapes — on a soft lavender background
+- **accessories** — an elegant flat lay of beauty accessories — a set of makeup brushes, a cosmetic pouch and a rose quartz facial roller — on a soft sky blue background
+
+Сохраняются в `public/images/categories/<slug>.jpg`. Главная сама подставит их
+вместо SVG-заглушек, если файлы есть.
+
 ## Как подключить сгенерированные фото
 
 1. Сохраните файлы в `public/products/` как `<SKU>.jpg` (основной ракурс) и,

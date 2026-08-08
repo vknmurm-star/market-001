@@ -1,9 +1,22 @@
+import fs from "node:fs";
+import path from "node:path";
 import Link from "next/link";
 import Image from "next/image";
 import { getCategories, getFeaturedProducts } from "@/lib/catalog";
 import ProductGrid from "@/components/ProductGrid";
 
 export const dynamic = "force-dynamic";
+
+/** Сгенерированное фото категории, если есть; иначе SVG-заглушка. */
+function categoryImage(slug: string): string {
+  const dir = path.join(process.cwd(), "public", "images", "categories");
+  for (const ext of ["jpg", "png", "webp"]) {
+    if (fs.existsSync(path.join(dir, `${slug}.${ext}`))) {
+      return `/images/categories/${slug}.${ext}`;
+    }
+  }
+  return `/products/${slug}.svg`;
+}
 
 export default function HomePage() {
   const categories = getCategories();
@@ -73,7 +86,7 @@ export default function HomePage() {
             >
               <div className="relative aspect-square w-full overflow-hidden rounded-xl">
                 <Image
-                  src={`/products/${c.slug}.svg`}
+                  src={categoryImage(c.slug)}
                   alt={c.name}
                   fill
                   sizes="(max-width: 640px) 45vw, 15vw"
