@@ -54,11 +54,14 @@ export interface ProductImage {
 }
 
 export function getProductImages(productId: number): ProductImage[] {
-  return getDb()
+  const rows = getDb()
     .prepare(
       `SELECT id, path FROM product_images WHERE product_id = ? ORDER BY sort ASC, id ASC`,
     )
     .all(productId) as unknown as ProductImage[];
+  // возвращаем plain-объекты (node:sqlite отдаёт null-prototype, а их нельзя
+  // передавать в клиентские компоненты)
+  return rows.map((r) => ({ id: r.id, path: r.path }));
 }
 
 export function addProductImage(productId: number, imgPath: string): void {
