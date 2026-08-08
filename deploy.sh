@@ -11,7 +11,7 @@ echo "=== Сохранение локальных правок (если ест�
 git stash
 
 echo "=== Обновление кода из GitHub ==="
-git pull
+git pull origin master
 
 echo "=== Восстановление локальных правок ==="
 git stash pop || true
