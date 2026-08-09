@@ -3,7 +3,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Контакты",
-  description: "Контакты и режим работы интернет-магазина косметики Маркет.",
+  description: "Контакты и режим работы интернет-магазина косметики Beauty.",
   alternates: { canonical: "/contacts" },
 };
 

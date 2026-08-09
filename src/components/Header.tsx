@@ -53,7 +53,7 @@ export default function Header({
       <div className="container-page flex items-center gap-4 py-3">
         <Link
           href="/"
-          aria-label="Маркет — на главную"
+          aria-label="Beauty — на главную"
           className="flex shrink-0 items-center gap-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           {logo ? (
@@ -61,13 +61,13 @@ export default function Header({
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={logo}
-              alt="Маркет"
-              className="h-10 w-auto max-h-12 object-contain md:h-11"
+              alt="Beauty"
+              className="h-11 w-auto max-h-14 object-contain md:h-12"
             />
           ) : (
             <>
               <span className="text-2xl font-bold leading-none tracking-tight text-accent">
-                Маркет
+                Beauty
               </span>
               <span className="hidden text-sm text-muted sm:inline">
                 косметика и красота

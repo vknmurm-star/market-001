@@ -26,7 +26,7 @@ export async function generateMetadata({
   if (!category) return {};
   return {
     title: category.name,
-    description: `${category.name} — купить в интернет-магазине косметики Маркет. Большой выбор, честные цены, доставка курьером и самовывоз.`,
+    description: `${category.name} — купить в интернет-магазине косметики Beauty. Большой выбор, честные цены, доставка курьером и самовывоз.`,
     alternates: { canonical: `/catalog/${category.slug}` },
     openGraph: {
       title: category.name,

@@ -8,7 +8,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 const OK: Record<string, string> = {
   logo: "Логотип обновлён.",
-  removed: "Логотип удалён — в шапке снова текст «Маркет».",
+  removed: "Логотип удалён — в шапке снова текст «Beauty».",
 };
 
 export default async function AdminSettingsPage({
@@ -50,13 +50,13 @@ export default async function AdminSettingsPage({
                 className="max-h-full max-w-full object-contain"
               />
             ) : (
-              <span className="text-lg font-bold text-accent">Маркет</span>
+              <span className="text-lg font-bold text-accent">Beauty</span>
             )}
           </div>
           <span className="text-sm text-muted">
             {logo
               ? "Сейчас в шапке показывается загруженный логотип."
-              : "Логотип не задан — в шапке текст «Маркет»."}
+              : "Логотип не задан — в шапке текст «Beauty»."}
           </span>
         </div>
 
@@ -78,7 +78,7 @@ export default async function AdminSettingsPage({
             />
             <span className="mt-1 block text-xs text-muted">
               PNG, JPG, WEBP или SVG, до 2 МБ. Лучше — горизонтальный, на
-              прозрачном фоне. Заменит текстовую надпись «Маркет» в шапке.
+              прозрачном фоне. Заменит текстовую надпись «Beauty» в шапке.
             </span>
           </label>
           <div className="flex items-center gap-3">

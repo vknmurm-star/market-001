@@ -4,7 +4,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 export const metadata: Metadata = {
   title: "Доставка и оплата",
   description:
-    "Способы доставки (СДЭК, Boxberry, DPD, 5Post, Почта России) и оплаты (картой, СБП или при получении) в интернет-магазине косметики Маркет.",
+    "Способы доставки (СДЭК, Boxberry, DPD, 5Post, Почта России) и оплаты (картой, СБП или при получении) в интернет-магазине косметики Beauty.",
   alternates: { canonical: "/delivery" },
 };
 

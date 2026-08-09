@@ -10,8 +10,8 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Маркет — интернет-магазин косметики и красоты",
-    template: "%s | Маркет",
+    default: "Beauty — интернет-магазин косметики и красоты",
+    template: "%s | Beauty",
   },
   description: SITE_DESCRIPTION,
   alternates: { canonical: "/" },
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     locale: "ru_RU",
     siteName: SITE_NAME,
     url: SITE_URL,
-    title: "Маркет — интернет-магазин косметики и красоты",
+    title: "Beauty — интернет-магазин косметики и красоты",
     description: SITE_DESCRIPTION,
   },
   twitter: { card: "summary_large_image" },

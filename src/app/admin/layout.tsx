@@ -18,7 +18,7 @@ export default async function AdminLayout({
   return (
     <div className="container-page py-8">
       <div className="mb-6 flex flex-wrap items-center gap-4 border-b pb-4">
-        <span className="text-lg font-bold text-accent">Админ-панель · Маркет</span>
+        <span className="text-lg font-bold text-accent">Админ-панель · Beauty</span>
         {authed && (
           <>
             <nav className="flex gap-4 text-sm">
