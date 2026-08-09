@@ -62,7 +62,7 @@ export default function Header({
             <img
               src={logo}
               alt="Маркет"
-              className="h-9 w-auto max-h-10 object-contain"
+              className="h-10 w-auto max-h-12 object-contain md:h-11"
             />
           ) : (
             <>
@@ -76,27 +76,29 @@ export default function Header({
           )}
         </Link>
 
-        <form
-          action="/catalog"
-          role="search"
-          className="ml-auto hidden max-w-md flex-1 items-center md:flex"
-        >
-          <input
-            type="search"
-            name="q"
-            placeholder="Поиск товаров…"
-            aria-label="Поиск товаров"
-            className="w-full rounded-l-full border border-r-0 bg-background px-4 py-2 text-sm outline-none transition focus:border-accent"
-          />
-          <button
-            type="submit"
-            className="rounded-r-full border border-l-0 border-accent bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1"
+        <div className="hidden flex-1 justify-center md:flex">
+          <form
+            action="/catalog"
+            role="search"
+            className="flex w-full max-w-md items-center"
           >
-            Найти
-          </button>
-        </form>
+            <input
+              type="search"
+              name="q"
+              placeholder="Поиск товаров…"
+              aria-label="Поиск товаров"
+              className="w-full rounded-l-full border border-r-0 bg-background px-4 py-2 text-sm outline-none transition focus:border-accent"
+            />
+            <button
+              type="submit"
+              className="rounded-r-full border border-l-0 border-accent bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1"
+            >
+              Найти
+            </button>
+          </form>
+        </div>
 
-        <nav className="ml-auto flex items-center gap-5 md:ml-4">
+        <nav className="ml-auto flex shrink-0 items-center gap-5 md:ml-0">
           <Link href="/catalog" className={navLink(isActive("/catalog", true))}>
             Каталог
           </Link>
