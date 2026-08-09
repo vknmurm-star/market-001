@@ -66,7 +66,13 @@ export function getCategoryBySlug(slug: string): Category | null {
   return row ? mapCategory(row) : null;
 }
 
-export type SortKey = "popular" | "price-asc" | "price-desc" | "new";
+export type SortKey =
+  | "popular"
+  | "price-asc"
+  | "price-desc"
+  | "new"
+  | "sku"
+  | "name";
 
 export interface ProductFilter {
   categorySlug?: string;
@@ -84,6 +90,11 @@ function orderClause(sort: SortKey | undefined): string {
       return "p.price DESC";
     case "new":
       return "p.created_at DESC, p.id DESC";
+    case "sku":
+      return "p.sku ASC";
+    case "name":
+      // алфавитный порядок с учётом кириллицы (ulower — Unicode-понижение)
+      return "ulower(p.name) ASC";
     case "popular":
     default:
       return "p.popularity DESC, p.id ASC";

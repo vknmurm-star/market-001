@@ -1,15 +1,31 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/adminAuth";
-import { getProducts } from "@/lib/catalog";
+import { getProducts, type SortKey } from "@/lib/catalog";
 import { getAllOrders } from "@/lib/orders";
 import { formatPrice } from "@/lib/site";
 import { deleteProductAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminProductsPage() {
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+const SORTS: { key: SortKey; label: string }[] = [
+  { key: "sku", label: "По артикулу" },
+  { key: "name", label: "По названию (А–Я)" },
+  { key: "new", label: "Сначала новые" },
+];
+
+export default async function AdminProductsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
   await requireAdmin();
-  const products = getProducts({ sort: "new" });
+  const sp = await searchParams;
+  const sort: SortKey = SORTS.some((s) => s.key === sp.sort)
+    ? (sp.sort as SortKey)
+    : "sku";
+  const products = getProducts({ sort });
   const orders = getAllOrders();
   const newOrders = orders.filter((o) => o.status === "new").length;
 
@@ -30,7 +46,7 @@ export default async function AdminProductsPage() {
         </div>
       </div>
 
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">Товары</h1>
         <Link
           href="/admin/products/new"
@@ -38,6 +54,24 @@ export default async function AdminProductsPage() {
         >
           + Добавить товар
         </Link>
+      </div>
+
+      <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
+        <span className="text-muted">Сортировка:</span>
+        {SORTS.map((s) => (
+          <Link
+            key={s.key}
+            href={`/admin?sort=${s.key}`}
+            aria-current={sort === s.key ? "true" : undefined}
+            className={`rounded-full px-3 py-1 transition-colors ${
+              sort === s.key
+                ? "bg-accent-soft font-medium text-accent-dark"
+                : "text-muted hover:text-accent"
+            }`}
+          >
+            {s.label}
+          </Link>
+        ))}
       </div>
 
       <div className="overflow-x-auto rounded-2xl border bg-card">

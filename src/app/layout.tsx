@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/lib/cart";
@@ -7,14 +6,6 @@ import { getCategories } from "@/lib/catalog";
 import { getSetting } from "@/lib/settings";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
-
-// Элегантный serif для заголовков — «магазинный» стиль косметики.
-const display = Cormorant_Garamond({
-  subsets: ["latin", "cyrillic"],
-  weight: ["500", "600", "700"],
-  variable: "--font-display",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -68,7 +59,7 @@ export default function RootLayout({
   const logo = getSetting("site_logo");
 
   return (
-    <html lang="ru" className={`h-full ${display.variable}`}>
+    <html lang="ru" className="h-full">
       <body className="flex min-h-full flex-col">
         <CartProvider>
           <a
