@@ -4,9 +4,10 @@
   --background: #fdfbfa;
   --foreground: #2b2226;
   --muted: #7a6f74;
-  --accent: #c9497a;
-  --accent-dark: #a83862;
-  --accent-soft: #fbe9f0;
+  --accent: #9d5c7a;
+  --accent-dark: #79475e;
+  --accent-soft: #f5eaf0;
+  --heading: #6b3f56;
   --border: #ece4e7;
   --card: #ffffff;
   --success: #2f7d55;
@@ -41,12 +42,14 @@ a {
   color: inherit;
 }
 
-/* Элегантный serif для заголовков — «магазинный» стиль косметики/красоты. */
+/* Элегантный serif + фирменный сливовый цвет для заголовков —
+   «магазинный» стиль косметики/красоты. */
 h1,
 h2,
 .font-display {
   font-family: var(--font-display), Georgia, "Times New Roman", serif;
-  letter-spacing: -0.01em;
+  color: var(--heading);
+  letter-spacing: 0;
 }
 
 .container-page {

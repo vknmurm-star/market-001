@@ -21,7 +21,8 @@ npm install
 
 echo "=== Чистая сборка (удаляем .next во избежание stale client manifest) ==="
 rm -rf .next
-npm run build
+# Повтор при разовом сбое (например, fetch шрифтов next/font с Google Fonts).
+npm run build || { echo "Сборка упала — повторяю попытку…"; sleep 3; rm -rf .next; npm run build; }
 
 echo "=== Перезапуск сайта ==="
 pm2 restart market-store

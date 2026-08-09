@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display } from "next/font/google";
+import { Cormorant_Garamond } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/lib/cart";
@@ -9,7 +9,7 @@ import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 // Элегантный serif для заголовков — «магазинный» стиль косметики.
-const playfair = Playfair_Display({
+const display = Cormorant_Garamond({
   subsets: ["latin", "cyrillic"],
   weight: ["500", "600", "700"],
   variable: "--font-display",
@@ -68,7 +68,7 @@ export default function RootLayout({
   const logo = getSetting("site_logo");
 
   return (
-    <html lang="ru" className={`h-full ${playfair.variable}`}>
+    <html lang="ru" className={`h-full ${display.variable}`}>
       <body className="flex min-h-full flex-col">
         <CartProvider>
           <a
