@@ -12,6 +12,8 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 const SORTS: { key: SortKey; label: string }[] = [
   { key: "sku", label: "По артикулу" },
   { key: "name", label: "По названию (А–Я)" },
+  { key: "price-asc", label: "По цене" },
+  { key: "stock", label: "По остатку (мало→много)" },
   { key: "new", label: "Сначала новые" },
 ];
 

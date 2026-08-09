@@ -72,7 +72,8 @@ export type SortKey =
   | "price-desc"
   | "new"
   | "sku"
-  | "name";
+  | "name"
+  | "stock";
 
 export interface ProductFilter {
   categorySlug?: string;
@@ -95,6 +96,9 @@ function orderClause(sort: SortKey | undefined): string {
     case "name":
       // алфавитный порядок с учётом кириллицы (ulower — Unicode-понижение)
       return "ulower(p.name) ASC";
+    case "stock":
+      // мало на складе — сверху (удобно для пополнения)
+      return "p.stock ASC, p.id ASC";
     case "popular":
     default:
       return "p.popularity DESC, p.id ASC";
