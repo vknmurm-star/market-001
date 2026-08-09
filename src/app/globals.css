@@ -41,6 +41,14 @@ a {
   color: inherit;
 }
 
+/* Элегантный serif для заголовков — «магазинный» стиль косметики/красоты. */
+h1,
+h2,
+.font-display {
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+  letter-spacing: -0.01em;
+}
+
 .container-page {
   width: 100%;
   max-width: 1200px;
