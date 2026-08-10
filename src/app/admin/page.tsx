@@ -92,7 +92,19 @@ export default async function AdminProductsPage({
             {products.map((p) => (
               <tr key={p.id} className="border-b last:border-0">
                 <td className="px-4 py-3 text-muted">{p.sku}</td>
-                <td className="px-4 py-3 font-medium">{p.name}</td>
+                <td className="px-4 py-3 font-medium">
+                  <div className="flex items-center gap-3">
+                    <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border bg-background">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={p.image || "/products/accessories.svg"}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </span>
+                    <span>{p.name}</span>
+                  </div>
+                </td>
                 <td className="px-4 py-3 text-muted">{p.categoryName}</td>
                 <td className="px-4 py-3 text-right">
                   {formatPrice(p.price)}
