@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ProductImage } from "@/lib/adminData";
+import ImageZoom from "@/components/ImageZoom";
 
 const MAX = 4;
 
@@ -60,8 +61,7 @@ export default function ProductImagesEditor({
                 }`}
               >
                 <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md border bg-background">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <ImageZoom
                     src={img.path}
                     alt=""
                     className="h-full w-full object-cover"

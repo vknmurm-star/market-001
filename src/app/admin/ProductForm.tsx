@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Category, Product } from "@/lib/types";
 import type { ProductImage } from "@/lib/adminData";
 import ProductImagesEditor from "./ProductImagesEditor";
+import ImageZoom from "@/components/ImageZoom";
 
 export default function ProductForm({
   categories,
@@ -112,8 +113,7 @@ export default function ProductForm({
         {images.length === 0 && (
           <div className="flex items-center gap-3 text-sm text-muted">
             <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border bg-card">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <ImageZoom
                 src={product?.image || "/products/accessories.svg"}
                 alt="Текущее изображение"
                 className="h-full w-full object-cover"
