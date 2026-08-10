@@ -9,13 +9,21 @@ export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
-const SORTS: { key: SortKey; label: string }[] = [
-  { key: "sku", label: "По артикулу" },
-  { key: "name", label: "По названию (А–Я)" },
-  { key: "price-asc", label: "По цене" },
-  { key: "stock", label: "По остатку (мало→много)" },
-  { key: "new", label: "Сначала новые" },
-];
+// Кликабельные столбцы: у каждого свои ключи сортировки ↑/↓.
+const COLS = [
+  { field: "sku", label: "Артикул", asc: "sku", desc: "sku-desc", right: false },
+  { field: "name", label: "Название", asc: "name", desc: "name-desc", right: false },
+  { field: "price", label: "Цена", asc: "price-asc", desc: "price-desc", right: true },
+  { field: "stock", label: "Остаток", asc: "stock", desc: "stock-desc", right: true },
+] as const satisfies readonly {
+  field: string;
+  label: string;
+  asc: SortKey;
+  desc: SortKey;
+  right: boolean;
+}[];
+
+const ALL_SORT_KEYS: SortKey[] = COLS.flatMap((c) => [c.asc, c.desc]);
 
 export default async function AdminProductsPage({
   searchParams,
@@ -24,9 +32,44 @@ export default async function AdminProductsPage({
 }) {
   await requireAdmin();
   const sp = await searchParams;
-  const sort: SortKey = SORTS.some((s) => s.key === sp.sort)
-    ? (sp.sort as SortKey)
-    : "sku";
+  const sort: SortKey =
+    typeof sp.sort === "string" && ALL_SORT_KEYS.includes(sp.sort as SortKey)
+      ? (sp.sort as SortKey)
+      : "sku";
+
+  // <th> с кликабельной сортировкой и стрелкой-индикатором направления.
+  const sortHeader = (col: (typeof COLS)[number]) => {
+    const active = sort === col.asc || sort === col.desc;
+    const dir: "asc" | "desc" = sort === col.desc ? "desc" : "asc";
+    const next = active && dir === "asc" ? col.desc : col.asc;
+    return (
+      <th
+        key={col.field}
+        aria-sort={active ? (dir === "asc" ? "ascending" : "descending") : "none"}
+        className={`px-4 py-3 ${col.right ? "text-right" : ""}`}
+      >
+        <Link
+          href={`/admin?sort=${next}`}
+          title={`Сортировать по «${col.label}»`}
+          className={`group inline-flex items-center gap-1 ${
+            col.right ? "flex-row-reverse" : ""
+          } ${active ? "text-accent-dark" : "hover:text-accent"}`}
+        >
+          <span className={active ? "font-semibold" : ""}>{col.label}</span>
+          <span
+            aria-hidden
+            className={`text-[10px] leading-none ${
+              active
+                ? "text-accent"
+                : "opacity-0 transition-opacity group-hover:opacity-40"
+            }`}
+          >
+            {active ? (dir === "asc" ? "▲" : "▼") : "▲"}
+          </span>
+        </Link>
+      </th>
+    );
+  };
   const products = getProducts({ sort });
   const orders = getAllOrders();
   const newOrders = orders.filter((o) => o.status === "new").length;
@@ -58,33 +101,20 @@ export default async function AdminProductsPage({
         </Link>
       </div>
 
-      <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
-        <span className="text-muted">Сортировка:</span>
-        {SORTS.map((s) => (
-          <Link
-            key={s.key}
-            href={`/admin?sort=${s.key}`}
-            aria-current={sort === s.key ? "true" : undefined}
-            className={`rounded-full px-3 py-1 transition-colors ${
-              sort === s.key
-                ? "bg-accent-soft font-medium text-accent-dark"
-                : "text-muted hover:text-accent"
-            }`}
-          >
-            {s.label}
-          </Link>
-        ))}
-      </div>
+      <p className="mb-3 text-xs text-muted">
+        Клик по заголовку столбца сортирует по нему; повторный клик меняет
+        направление (▲ по возрастанию / ▼ по убыванию).
+      </p>
 
       <div className="overflow-x-auto rounded-2xl border bg-card">
         <table className="w-full min-w-[720px] text-sm">
           <thead className="border-b bg-background/60 text-left text-muted">
             <tr>
-              <th className="px-4 py-3">Артикул</th>
-              <th className="px-4 py-3">Название</th>
+              {sortHeader(COLS[0])}
+              {sortHeader(COLS[1])}
               <th className="px-4 py-3">Категория</th>
-              <th className="px-4 py-3 text-right">Цена</th>
-              <th className="px-4 py-3 text-right">Остаток</th>
+              {sortHeader(COLS[2])}
+              {sortHeader(COLS[3])}
               <th className="px-4 py-3 text-right">Действия</th>
             </tr>
           </thead>

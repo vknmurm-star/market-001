@@ -72,8 +72,11 @@ export type SortKey =
   | "price-desc"
   | "new"
   | "sku"
+  | "sku-desc"
   | "name"
-  | "stock";
+  | "name-desc"
+  | "stock"
+  | "stock-desc";
 
 export interface ProductFilter {
   categorySlug?: string;
@@ -93,12 +96,18 @@ function orderClause(sort: SortKey | undefined): string {
       return "p.created_at DESC, p.id DESC";
     case "sku":
       return "p.sku ASC";
+    case "sku-desc":
+      return "p.sku DESC";
     case "name":
       // алфавитный порядок с учётом кириллицы (ulower — Unicode-понижение)
       return "ulower(p.name) ASC";
+    case "name-desc":
+      return "ulower(p.name) DESC";
     case "stock":
       // мало на складе — сверху (удобно для пополнения)
       return "p.stock ASC, p.id ASC";
+    case "stock-desc":
+      return "p.stock DESC, p.id ASC";
     case "popular":
     default:
       return "p.popularity DESC, p.id ASC";
