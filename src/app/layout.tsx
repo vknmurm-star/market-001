@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CookieBanner from "@/components/CookieBanner";
 import { CartProvider } from "@/lib/cart";
 import { getCategories } from "@/lib/catalog";
 import { getSetting } from "@/lib/settings";
@@ -73,6 +74,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer categories={categories} />
+          <CookieBanner />
         </CartProvider>
         <script
           type="application/ld+json"
