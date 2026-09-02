@@ -27,7 +27,7 @@ export default function HomePage() {
   const newest = getNewProducts(10);
 
   return (
-    <div className="container-page py-8">
+    <div className="container-page pb-8 pt-12">
       {/* Hero */}
       <HomeHero
         previewProducts={newest.map((p) => ({
