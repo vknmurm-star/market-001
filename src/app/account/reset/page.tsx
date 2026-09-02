@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/userAuth";
 import Honeypot from "@/components/Honeypot";
+import PasswordInput from "@/components/PasswordInput";
 import { resetAction } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -54,9 +55,8 @@ export default async function ResetPage({
               <input type="hidden" name="token" value={token} />
               <label className="block">
                 <span className="mb-1 block text-sm font-medium">Новый пароль</span>
-                <input
+                <PasswordInput
                   name="next"
-                  type="password"
                   required
                   minLength={6}
                   autoComplete="new-password"
@@ -70,9 +70,8 @@ export default async function ResetPage({
                 <span className="mb-1 block text-sm font-medium">
                   Повторите пароль
                 </span>
-                <input
+                <PasswordInput
                   name="next2"
-                  type="password"
                   required
                   minLength={6}
                   autoComplete="new-password"

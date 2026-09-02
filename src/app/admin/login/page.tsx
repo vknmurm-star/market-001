@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { isAdminAuthed } from "@/lib/adminAuth";
+import PasswordInput from "@/components/PasswordInput";
 import { loginAction } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -21,9 +22,8 @@ export default async function AdminLoginPage({
       <form action={loginAction} className="space-y-4">
         <label className="block">
           <span className="mb-1 block text-sm font-medium">Пароль</span>
-          <input
+          <PasswordInput
             name="password"
-            type="password"
             required
             autoFocus
             className="w-full rounded-lg border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent"

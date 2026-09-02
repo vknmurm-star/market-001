@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/userAuth";
 import Honeypot from "@/components/Honeypot";
+import PasswordInput from "@/components/PasswordInput";
 import { loginAction } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -63,9 +64,8 @@ export default async function LoginPage({
                 Забыли пароль?
               </Link>
             </div>
-            <input
+            <PasswordInput
               name="password"
-              type="password"
               required
               autoComplete="current-password"
               className={inputClass}

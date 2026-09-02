@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { requireUser } from "@/lib/userAuth";
+import PasswordInput from "@/components/PasswordInput";
 import { changePasswordAction, updateProfileAction } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -95,9 +96,8 @@ export default async function SettingsPage({
           <h2 className="font-semibold">Смена пароля</h2>
           <label className="block">
             <span className="mb-1 block text-sm font-medium">Текущий пароль</span>
-            <input
+            <PasswordInput
               name="current"
-              type="password"
               required
               className={inputClass}
               autoComplete="current-password"
@@ -105,9 +105,8 @@ export default async function SettingsPage({
           </label>
           <label className="block">
             <span className="mb-1 block text-sm font-medium">Новый пароль</span>
-            <input
+            <PasswordInput
               name="next"
-              type="password"
               required
               minLength={6}
               className={inputClass}
@@ -119,9 +118,8 @@ export default async function SettingsPage({
             <span className="mb-1 block text-sm font-medium">
               Повторите новый пароль
             </span>
-            <input
+            <PasswordInput
               name="next2"
-              type="password"
               required
               minLength={6}
               className={inputClass}
