@@ -78,7 +78,7 @@ export default async function SettingsPage({
               autoComplete="email"
             />
             <span className="mt-1 block text-xs text-muted">
-              При смене email история заказов останется привязанной к аккаунту.
+              При смене email история ваших заказов сохраняется.
             </span>
           </label>
           <button
