@@ -184,6 +184,19 @@ export function getFeaturedProducts(limit = 8): Product[] {
   return rows.map(mapProduct);
 }
 
+/**
+ * Последние добавленные товары («новинки») — для карусели в hero-блоке
+ * главной. В схеме есть products.created_at, поэтому это надёжнее случайной
+ * выборки (ORDER BY RANDOM() медленнее на больших таблицах и даёт разный
+ * набор при каждом заходе, что усложняет проверку).
+ */
+export function getNewProducts(limit = 3): Product[] {
+  const rows = getDb()
+    .prepare(`${PRODUCT_SELECT} ORDER BY p.created_at DESC, p.id DESC LIMIT ?`)
+    .all(limit) as unknown as ProductRow[];
+  return rows.map(mapProduct);
+}
+
 export function getPriceBounds(): { min: number; max: number } {
   const row = getDb()
     .prepare(`SELECT MIN(price) AS min, MAX(price) AS max FROM products`)

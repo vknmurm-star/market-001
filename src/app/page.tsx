@@ -2,8 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import Link from "next/link";
 import Image from "next/image";
-import { getCategories, getFeaturedProducts } from "@/lib/catalog";
+import { getCategories, getFeaturedProducts, getNewProducts } from "@/lib/catalog";
 import ProductGrid from "@/components/ProductGrid";
+import HomeHero from "@/components/HomeHero";
 
 export const dynamic = "force-dynamic";
 
@@ -21,35 +22,26 @@ function categoryImage(slug: string): string {
 export default function HomePage() {
   const categories = getCategories();
   const featured = getFeaturedProducts(8);
+  // Карусель в hero — новинки (последние добавленные), а не топ популярных:
+  // популярное уже показано отдельно ниже, в блоке «Популярные товары».
+  const newest = getNewProducts(10);
 
   return (
     <div className="container-page py-8">
       {/* Hero */}
-      <section className="mb-12 overflow-hidden rounded-3xl bg-gradient-to-br from-accent-soft to-background p-8 md:p-14">
-        <div className="max-w-2xl">
-          <h1 className="text-3xl font-bold leading-tight md:text-5xl">
-            Косметика и уход для вашей красоты
-          </h1>
-          <p className="mt-4 text-lg text-muted">
-            Уход за лицом и телом, средства для волос, макияж, парфюмерия и
-            аксессуары. Честные цены, быстрая доставка курьером и самовывоз.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              href="/catalog"
-              className="rounded-full bg-accent px-6 py-3 font-semibold text-white hover:bg-accent-dark"
-            >
-              Перейти в каталог
-            </Link>
-            <Link
-              href="/catalog?sort=price-asc"
-              className="rounded-full border border-accent px-6 py-3 font-semibold text-accent-dark hover:bg-accent-soft"
-            >
-              Выгодные цены
-            </Link>
-          </div>
-        </div>
-      </section>
+      <HomeHero
+        previewProducts={newest.map((p) => ({
+          slug: p.slug,
+          sku: p.sku,
+          name: p.name,
+          price: p.price,
+          oldPrice: p.oldPrice,
+          image: p.image,
+          description: p.description,
+          categoryName: p.categoryName,
+          stock: p.stock,
+        }))}
+      />
 
       {/* Преимущества */}
       <section className="mb-12 grid grid-cols-2 gap-4 md:grid-cols-4">

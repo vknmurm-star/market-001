@@ -2,12 +2,23 @@ import Link from "next/link";
 import { SITE_NAME } from "@/lib/site";
 import type { Category } from "@/lib/types";
 
-export default function Footer({ categories }: { categories: Category[] }) {
+export default function Footer({
+  categories,
+  logo,
+}: {
+  categories: Category[];
+  logo?: string | null;
+}) {
   return (
     <footer className="mt-16 border-t bg-card">
       <div className="container-page grid gap-8 py-10 sm:grid-cols-2 md:grid-cols-4">
         <div>
-          <div className="text-lg font-bold text-accent">Beauty</div>
+          {logo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={logo} alt="Beauty" className="h-9 w-auto object-contain" />
+          ) : (
+            <div className="text-lg font-bold text-accent">Beauty</div>
+          )}
           <p className="mt-2 text-sm text-muted">
             Интернет-магазин косметики и средств для красоты. Доставка курьером
             и самовывоз.
