@@ -1,4 +1,4 @@
-export const SITE_URL = (process.env.SITE_URL ?? "https://market.an51.su").replace(
+export const SITE_URL = (process.env.SITE_URL ?? "https://beauty.an51.su").replace(
   /\/$/,
   "",
 );

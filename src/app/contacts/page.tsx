@@ -27,7 +27,7 @@ export default function ContactsPage() {
           </div>
           <div className="rounded-2xl border bg-card p-6">
             <div className="text-sm text-muted">Email</div>
-            <div className="mt-1 text-lg font-semibold">shop@market.an51.su</div>
+            <div className="mt-1 text-lg font-semibold">shop@beauty.an51.su</div>
             <div className="mt-1 text-sm text-muted">отвечаем в течение дня</div>
           </div>
           <div className="rounded-2xl border bg-card p-6">
