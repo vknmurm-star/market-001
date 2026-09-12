@@ -49,7 +49,12 @@ export default function ImageZoom({
           aria-modal="true"
           aria-label="Просмотр изображения"
           onClick={() => setOpen(false)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 sm:p-8"
+          // Явный rgba(), а не bg-black/80: у Tailwind v4 opacity-модификатор
+          // компилируется в oklab(0 0 0 / 0.8), который в некоторых окружениях
+          // рендерится почти прозрачным (подложка едва темнеет) — фото на
+          // светлом фоне сливается с ней и выглядит как пустой прямоугольник.
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
         >
           <button
             type="button"
