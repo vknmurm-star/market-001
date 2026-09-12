@@ -58,7 +58,12 @@ export default function ProductGallery({
         />
         <span
           aria-hidden
-          className="pointer-events-none absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/45 text-white opacity-0 transition group-hover:opacity-100"
+          // Явный rgba(), а не bg-black/45 — см. подложку лайтбокса выше: у
+          // Tailwind v4 opacity-модификатор для чистого чёрного (oklab
+          // lightness=0 — вырожденный случай) рендерится заметно светлее
+          // задуманного в этом окружении.
+          className="pointer-events-none absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full text-white opacity-0 transition group-hover:opacity-100"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.45)" }}
         >
           {/* иконка лупы */}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
