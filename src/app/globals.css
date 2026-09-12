@@ -70,8 +70,21 @@
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-* {
-  border-color: var(--border);
+/* Tailwind v4 меняет дефолтный border-color на currentColor (было gray-200
+   в v3) — это правило восстанавливает прежнее поведение для border-* без
+   явного цвета (таких мест по сайту десятки — карточки, шапка, футер,
+   разделители и т.д.). Обёрнуто в @layer base (как рекомендует официальный
+   Tailwind v4 upgrade guide), а НЕ объявлено безслойно: безслойное правило
+   перебивало бы @layer utilities по каскаду независимо от специфичности —
+   именно поэтому border-success/30 рендерился серым, а не зелёным, в
+   success-уведомлениях (account/forgot, account/login, account/settings,
+   admin/settings). Внутри @layer base оно по-прежнему действует как дефолт
+   везде, где нет явного border-{цвет} утилитой, но справедливо проигрывает
+   любой такой утилите — как и задумано в модели Tailwind. */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
 }
 
 body {
