@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/lib/cart";
@@ -57,11 +58,16 @@ export default function Header({
           className="flex shrink-0 items-center gap-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
           {logo ? (
-            // логотип заменяет текстовую надпись
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            // логотип заменяет текстовую надпись. Явные width/height + next/image
+            // вместо голого <img>: исходный загруженный файл — 500×434 (~200 КБ),
+            // а рендерится тут максимум ~56px высотой — next/image сжимает и
+            // конвертирует в WebP/AVIF под реальный размер (см. PageSpeed:
+            // это давало почти всю просадку mobile-производительности).
+            <Image
               src={logo}
               alt="Beauty"
+              width={112}
+              height={97}
               className="h-11 w-auto max-h-14 object-contain md:h-12"
             />
           ) : (

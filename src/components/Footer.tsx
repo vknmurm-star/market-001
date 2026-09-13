@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SITE_NAME } from "@/lib/site";
 import type { Category } from "@/lib/types";
@@ -14,8 +15,15 @@ export default function Footer({
       <div className="container-page grid gap-8 py-10 sm:grid-cols-2 md:grid-cols-4">
         <div>
           {logo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={logo} alt="Beauty" className="h-9 w-auto object-contain" />
+            // next/image вместо голого <img> — см. Header.tsx: сжимает
+            // исходный ~200 КБ файл под реально отображаемые ~36px высоты.
+            <Image
+              src={logo}
+              alt="Beauty"
+              width={112}
+              height={97}
+              className="h-9 w-auto object-contain"
+            />
           ) : (
             <div className="text-lg font-bold text-accent">Beauty</div>
           )}
