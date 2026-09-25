@@ -6,7 +6,7 @@ import { getCategories, getFeaturedProducts, getNewProducts } from "@/lib/catalo
 import ProductGrid from "@/components/ProductGrid";
 import HomeHero from "@/components/HomeHero";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 /** Сгенерированное фото категории, если есть; иначе SVG-заглушка. */
 function categoryImage(slug: string): string {

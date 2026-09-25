@@ -9,7 +9,7 @@ import ProductGrid from "@/components/ProductGrid";
 import ProductGallery from "@/components/ProductGallery";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 type Params = Promise<{ slug: string }>;
 
