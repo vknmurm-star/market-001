@@ -23,7 +23,7 @@ export default function Footer({
     <footer className="mt-24 border-t border-border bg-surface">
       <div className="container-page grid gap-12 pb-14 pt-16 sm:grid-cols-2 md:pt-24 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1.2fr]">
         <div className="sm:col-span-2 lg:col-span-1">
-          <Link href="/" aria-label="Beauty — на главную" className="inline-block">
+          <Link href="/" aria-label="Beauty, на главную" className="inline-block">
             {logo ? (
               <Image
                 src={logo}

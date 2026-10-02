@@ -7,9 +7,7 @@ import AddToCartButton from "./AddToCartButton";
 
 /**
  * Карточка товара по DESIGN.md: фон surface, радиус 8, фото 4/5, отступ 20.
- * Hover — подъём на 4px и мягкая тень. Кнопка «В корзину» на устройствах с
- * hover появляется при наведении/фокусе, на сенсорных видна всегда
- * (см. .card-cta в globals.css).
+ * Hover — подъём на 4px и мягкая тень. Кнопка «В корзину» видна всегда.
  */
 export default function ProductCard({
   product,
@@ -43,7 +41,7 @@ export default function ProductCard({
         </div>
         <Image
           src={product.image ?? "/products/accessories.svg"}
-          alt={`${product.name} — ${product.categoryName}`}
+          alt={`${product.name}, ${product.categoryName}`}
           fill
           preload={priority}
           sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"

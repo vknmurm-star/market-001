@@ -241,36 +241,9 @@
   }
 }
 
-/* Кнопка «В корзину» в карточке: скрыта до наведения ТОЛЬКО на устройствах с
-   hover и точным указателем; на сенсорных — видна всегда. */
+/* Кнопка «В корзину» в карточке: видна всегда (на всех устройствах), как на макете. */
 .card-cta {
   width: 100%;
-  transition:
-    opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
-    transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-@media (hover: hover) and (pointer: fine) {
-  /* Карточка 4/5: кнопка ложится на нижний край фото (125cqw = высота
-     фото при ширине карточки), под карточкой не остаётся пустой полосы. */
-  .product-card {
-    container-type: inline-size;
-  }
-  .product-card .card-cta {
-    position: absolute;
-    z-index: 10;
-    left: 1rem;
-    right: 1rem;
-    width: auto;
-    margin: 0;
-    top: calc(125cqw - 3.75rem);
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  .product-card:hover .card-cta,
-  .product-card:focus-within .card-cta {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* ------------------------------------------------------ reduced motion */

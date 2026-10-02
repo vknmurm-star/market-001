@@ -17,15 +17,30 @@ import CtaBanner from "@/components/home/CtaBanner";
 
 export const revalidate = 60;
 
-// Ширины карточек категорий в 12-колоночной сетке (editorial: 3 + 3 разной ширины)
-const CATEGORY_SPANS = [
-  "lg:col-span-3",
-  "lg:col-span-5",
-  "lg:col-span-4",
-  "lg:col-span-5",
-  "lg:col-span-4",
-  "lg:col-span-3",
+// Раскладка плиток категорий как на макете: 3 + 3 плитки разной ширины в
+// 12-колоночной сетке. Фото сняты под эти ширины (слева свободное место под
+// текст), поэтому известные категории идут в порядке макета; новые, если
+// появятся, добавляются в конец со средней шириной.
+const CATEGORY_LAYOUT: { slug: string; span: string }[] = [
+  { slug: "face-care", span: "lg:col-span-3" },
+  { slug: "hair-care", span: "lg:col-span-5" },
+  { slug: "makeup", span: "lg:col-span-4" },
+  { slug: "perfume", span: "lg:col-span-5" },
+  { slug: "body-care", span: "lg:col-span-4" },
+  { slug: "accessories", span: "lg:col-span-3" },
 ];
+const DEFAULT_SPAN = "lg:col-span-4";
+
+// Кадрирование фото в плитках и сила светлой подложки под текстом: на новых
+// фото слева свободное место, а у узких плиток обрезается бо́льшая часть кадра.
+const CATEGORY_LOOK: Record<string, { pos: string; scrim?: "soft" | "strong" }> = {
+  "face-care": { pos: "4% 40%", scrim: "strong" },
+  "hair-care": { pos: "60% 50%", scrim: "strong" },
+  makeup: { pos: "50% 50%" },
+  perfume: { pos: "35% 50%", scrim: "strong" },
+  "body-care": { pos: "70% 50%", scrim: "strong" },
+  accessories: { pos: "78% 50%", scrim: "strong" },
+};
 
 // Шаги ритуала — реальные товары из базы (по артикулу); если артикула нет,
 // берём следующие по популярности товары категории «Уход за лицом».
@@ -39,6 +54,12 @@ export default function HomePage() {
   const categories = getCategories();
   const all = getProducts();
   const bestsellers = getFeaturedProducts(8);
+
+  const rank = (slug: string) => {
+    const i = CATEGORY_LAYOUT.findIndex((l) => l.slug === slug);
+    return i === -1 ? CATEGORY_LAYOUT.length : i;
+  };
+  const orderedCategories = [...categories].sort((a, b) => rank(a.slug) - rank(b.slug));
 
   const counts = new Map<string, number>();
   for (const p of all) counts.set(p.categorySlug, (counts.get(p.categorySlug) ?? 0) + 1);
@@ -72,8 +93,8 @@ export default function HomePage() {
             actionHref="/catalog"
             actionLabel="Все категории"
           />
-          <div className="mt-8 grid grid-cols-2 gap-3 md:mt-10 md:grid-cols-3 md:gap-4 lg:grid-cols-12 lg:gap-6">
-            {categories.map((c, i) => {
+          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-10 lg:grid-cols-12 lg:gap-6">
+            {orderedCategories.map((c) => {
               const n = counts.get(c.slug) ?? 0;
               return (
                 <CategoryCard
@@ -82,9 +103,11 @@ export default function HomePage() {
                   name={c.name}
                   meta={`${n} ${plural(n, ["товар", "товара", "товаров"])}`}
                   image={categoryPhoto(c.slug)}
-                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 30vw"
-                  className={`aspect-[4/5] md:aspect-[4/3] lg:aspect-auto lg:h-[300px] ${
-                    CATEGORY_SPANS[i % CATEGORY_SPANS.length]
+                  objectPosition={CATEGORY_LOOK[c.slug]?.pos}
+                  scrim={CATEGORY_LOOK[c.slug]?.scrim}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw"
+                  className={`aspect-[16/10] sm:aspect-[4/3] lg:aspect-auto lg:h-[300px] ${
+                    CATEGORY_LAYOUT.find((l) => l.slug === c.slug)?.span ?? DEFAULT_SPAN
                   }`}
                 />
               );
@@ -118,9 +141,21 @@ export default function HomePage() {
 
       <Values
         tiles={[
-          { title: "Внимание к деталям", image: designImage("values-1") ?? categoryPhoto("face-care") },
-          { title: "Спокойный ритуал", image: designImage("values-2") ?? categoryPhoto("body-care") },
-          { title: "Забота о себе", image: designImage("values-3") ?? categoryPhoto("perfume") },
+          {
+            title: "Качество в каждой детали",
+            image: designImage("values-1") ?? categoryPhoto("face-care"),
+            tone: "light-on-dark",
+          },
+          {
+            title: "Красота в гармонии с природой",
+            image: designImage("values-2") ?? categoryPhoto("body-care"),
+            tone: "dark-left",
+          },
+          {
+            title: "Забота о вас и планете",
+            image: designImage("values-3") ?? categoryPhoto("perfume"),
+            tone: "dark-left",
+          },
         ]}
       />
 

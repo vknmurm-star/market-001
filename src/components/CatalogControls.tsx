@@ -58,8 +58,8 @@ export default function CatalogControls({
             aria-label="Цена от"
             className={`${inputSmClass} w-28`}
           />
-          <span className="text-secondary" aria-hidden>
-            —
+          <span className="type-small text-secondary" aria-hidden>
+            до
           </span>
           <input
             name="max"

@@ -4,6 +4,11 @@ import Button from "@/components/ui/Button";
 export interface ValueTile {
   title: string;
   image: string | null;
+  /**
+   * light-on-dark: белая подпись внизу на затемняющем градиенте (светлое фото);
+   * dark-left: тёмная подпись слева (на фото слева свободное место).
+   */
+  tone: "light-on-dark" | "dark-left";
 }
 
 /**
@@ -17,7 +22,9 @@ export default function Values({
 }) {
   const [big, a, b] = tiles;
   const tile = (t: ValueTile, sizes: string, cls: string, titleCls: string) => (
-    <div className={`relative isolate overflow-hidden rounded-md bg-surface-alt ${cls}`}>
+    <div
+      className={`relative isolate overflow-hidden rounded-md bg-surface-alt ${cls}`}
+    >
       {t.image ? (
         <Image
           src={t.image}
@@ -32,17 +39,41 @@ export default function Values({
           className="absolute inset-0 -z-10 bg-gradient-to-br from-surface-alt to-accent-light/50"
         />
       )}
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10"
-        style={{
-          background:
-            "linear-gradient(to top, rgba(0,0,0,.4) 0%, rgba(0,0,0,.12) 50%, rgba(0,0,0,0) 80%)",
-        }}
-      />
-      <p className={`absolute inset-x-0 bottom-0 p-5 font-display text-white md:p-7 ${titleCls}`}>
-        {t.title}
-      </p>
+      {t.tone === "light-on-dark" ? (
+        <>
+          {/* фото светлое: затемняем низ rgba-градиентом, чтобы белая подпись читалась */}
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(0,0,0,.62) 0%, rgba(0,0,0,.38) 28%, rgba(0,0,0,0) 62%)",
+            }}
+          />
+          <p
+            className={`absolute inset-x-0 bottom-0 p-5 font-display text-white [text-shadow:0_1px_12px_rgba(0,0,0,0.35)] md:p-7 ${titleCls}`}
+          >
+            {t.title}
+          </p>
+        </>
+      ) : (
+        <>
+          {/* светлая подложка слева: тёмная подпись читается на любом фото */}
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10"
+            style={{
+              background:
+                "linear-gradient(to right, rgba(247,243,238,.82) 0%, rgba(247,243,238,.55) 38%, rgba(247,243,238,0) 68%)",
+            }}
+          />
+          <p
+            className={`absolute inset-y-0 left-0 flex w-[58%] items-center p-5 font-display text-foreground md:p-7 ${titleCls}`}
+          >
+            {t.title}
+          </p>
+        </>
+      )}
     </div>
   );
 
@@ -56,8 +87,8 @@ export default function Values({
           </h2>
           <p className="type-body mt-6 max-w-md text-secondary">
             Мы собрали в одном месте уход за лицом и телом, средства для волос,
-            макияж, парфюмерию и аксессуары — чтобы забота о себе стала простой
-            и приятной ежедневной привычкой.
+            макияж, парфюмерию и аксессуары, чтобы забота о себе стала простой и
+            приятной ежедневной привычкой.
           </p>
           <div className="mt-8">
             <Button href="/about" arrow>
@@ -76,14 +107,14 @@ export default function Values({
           {tile(
             a,
             "(max-width: 1024px) 50vw, 24vw",
-            "aspect-[4/3]",
-            "text-[22px] leading-[1.1] md:text-[26px]",
+            "col-span-2 aspect-[16/9] sm:col-span-1",
+            "text-[22px] leading-[1.1] md:text-[28px]",
           )}
           {tile(
             b,
             "(max-width: 1024px) 50vw, 24vw",
-            "aspect-[4/3]",
-            "text-[22px] leading-[1.1] md:text-[26px]",
+            "col-span-2 aspect-[16/9] sm:col-span-1",
+            "text-[22px] leading-[1.1] md:text-[28px]",
           )}
         </div>
       </div>

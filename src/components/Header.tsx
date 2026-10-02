@@ -99,7 +99,7 @@ export default function Header({
       <div className="container-page flex h-[72px] items-center gap-6 lg:h-[88px] lg:gap-10">
         <Link
           href="/"
-          aria-label="Beauty — на главную"
+          aria-label="Beauty, на главную"
           className="flex shrink-0 items-center rounded-sm"
         >
           {logo ? (

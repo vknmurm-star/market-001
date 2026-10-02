@@ -38,9 +38,19 @@ export default function Ritual({
             className="-z-20 object-cover object-[75%_center] md:object-right"
           />
         ) : null}
+        {/* мобильный: мягкая вуаль сверху вниз под текстом;
+            десктоп: вуаль только слева под текстом, правая часть с лицом чистая */}
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 bg-gradient-to-b from-background/85 to-background/40 md:bg-gradient-to-r md:from-background/95 md:via-background/70 md:to-transparent"
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-background/80 via-background/35 to-transparent md:hidden"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 hidden md:block"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(247,243,238,.92) 0%, rgba(247,243,238,.78) 26%, rgba(247,243,238,.3) 42%, rgba(247,243,238,0) 54%)",
+          }}
         />
         <div className="container-page pb-40 pt-14 md:pb-48 md:pt-20">
           <p className="type-caption mb-4 text-secondary">Ритуал красоты</p>

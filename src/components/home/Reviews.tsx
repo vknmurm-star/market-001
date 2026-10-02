@@ -30,7 +30,7 @@ export default function Reviews() {
       <div className="container-page">
         <p className="type-caption mb-4 text-secondary">Отзывы покупательниц</p>
         <h2 id="reviews-title" className="type-h2 max-w-xl">
-          Ваши истории — наше вдохновение
+          Ваши истории вдохновляют нас
         </h2>
 
         <ul className="mt-12 grid gap-4 md:grid-cols-3 md:gap-6">

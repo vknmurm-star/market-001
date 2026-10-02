@@ -40,10 +40,10 @@ export default function Hero({ image }: { image: string | null }) {
       {/* вуаль в цвет фона: читаемость заголовка на любом фото */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-gradient-to-b from-background/40 via-background/75 to-background/90 md:bg-gradient-to-r md:from-background/95 md:via-background/60 md:to-transparent"
+        className="absolute inset-0 -z-10 bg-gradient-to-b from-background/0 via-background/50 to-background/95 md:bg-gradient-to-r md:from-background/70 md:via-background/25 md:to-transparent"
       />
 
-      <div className="container-page flex min-h-[560px] items-center py-16 md:min-h-[640px] lg:min-h-[700px]">
+      <div className="container-page flex min-h-[700px] items-end pb-12 pt-16 md:min-h-[640px] md:items-center md:py-16 lg:min-h-[700px]">
         <div className="max-w-[640px]">
           <p className="type-caption text-secondary">Интернет-магазин косметики</p>
           <h1 className="type-h1 mt-6">
@@ -52,7 +52,7 @@ export default function Hero({ image }: { image: string | null }) {
             <br />с собой
           </h1>
           <p className="type-body-lg mt-6 max-w-md text-secondary">
-            Уход за лицом и телом, волосы, макияж, парфюмерия и аксессуары —
+            Уход за лицом и телом, волосы, макияж, парфюмерия и аксессуары:
             всё для вашего ежедневного ритуала красоты.
           </p>
           <div className="mt-9">

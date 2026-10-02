@@ -99,7 +99,7 @@ export default async function ProductPage({ params }: { params: Params }) {
       <div className="mt-8 grid gap-10 md:mt-10 lg:grid-cols-[7fr_5fr] lg:gap-16">
         <ProductGallery
           images={gallery}
-          alt={`${product.name} — ${product.categoryName}`}
+          alt={`${product.name}, ${product.categoryName}`}
         />
 
         <div className="flex flex-col lg:pt-4">

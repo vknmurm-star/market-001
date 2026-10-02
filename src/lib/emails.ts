@@ -16,7 +16,7 @@ function layout(title: string, bodyHtml: string): string {
     </div>
     <div style="color:#7a6f74;font-size:12px;margin-top:16px">
       Это письмо отправлено магазином ${SITE_NAME} (${SITE_URL}).
-      Демонстрационный проект — реальная оплата и доставка не производятся.
+      Демонстрационный проект: реальная оплата и доставка не производятся.
     </div>
   </div></body></html>`;
 }
@@ -62,7 +62,7 @@ export async function sendOrderConfirmation(order: Order): Promise<boolean> {
     </p>`;
   return sendMail({
     to: order.email,
-    subject: `Заказ ${order.orderNumber} принят — ${SITE_NAME}`,
+    subject: `Заказ ${order.orderNumber} принят: ${SITE_NAME}`,
     html: layout("Заказ оформлен", body),
     text: `Спасибо за заказ! Номер: ${order.orderNumber}. Сумма: ${formatPrice(
       order.total,
@@ -92,7 +92,7 @@ export async function sendAdminNewOrder(order: Order): Promise<boolean> {
     </p>`;
   return sendMail({
     to,
-    subject: `Новый заказ ${order.orderNumber} — ${SITE_NAME}`,
+    subject: `Новый заказ ${order.orderNumber}: ${SITE_NAME}`,
     html: layout("Новый заказ", body),
   });
 }
@@ -115,12 +115,12 @@ export async function sendPasswordReset(
       <span style="word-break:break-all">${resetUrl}</span>
     </p>
     <p style="font-size:13px;color:#7a6f74">
-      Если вы не запрашивали сброс — просто проигнорируйте это письмо, пароль
+      Если вы не запрашивали сброс, просто проигнорируйте это письмо, пароль
       останется прежним.
     </p>`;
   return sendMail({
     to: email,
-    subject: `Сброс пароля — ${SITE_NAME}`,
+    subject: `Сброс пароля: ${SITE_NAME}`,
     html: layout("Сброс пароля", body),
     text: `Сброс пароля в ${SITE_NAME}. Ссылка (1 час): ${resetUrl}`,
   });

@@ -90,7 +90,7 @@ export default function ProductGallery({
             >
               <Image
                 src={src}
-                alt={`${alt} — вид ${i + 1}`}
+                alt={`${alt}, вид ${i + 1}`}
                 fill
                 sizes="80px"
                 className="object-cover"

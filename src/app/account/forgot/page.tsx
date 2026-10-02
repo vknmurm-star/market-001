@@ -51,7 +51,7 @@ export default async function ForgotPage({
         ) : (
           <>
             <p className="mt-1 text-sm text-secondary">
-              Укажите email аккаунта — пришлём ссылку для сброса пароля.
+              Укажите email аккаунта, и мы пришлём ссылку для сброса пароля.
             </p>
             <form action={forgotAction} className="mt-6 space-y-4">
               <Honeypot />

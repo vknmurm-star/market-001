@@ -24,7 +24,7 @@ type Payment = "online" | "sbp" | "cash";
 const PAYMENTS: { value: Payment; label: string; badge?: string }[] = [
   { value: "cash", label: "При получении (курьеру / на самовывозе)" },
   { value: "online", label: "Онлайн-оплата картой", badge: "ЮKassa · тестовый режим" },
-  { value: "sbp", label: "СБП — оплата по QR из банковского приложения", badge: "тестовый режим" },
+  { value: "sbp", label: "СБП: оплата по QR из банковского приложения", badge: "тестовый режим" },
 ];
 
 export default function CheckoutForm({
@@ -148,7 +148,7 @@ export default function CheckoutForm({
             />
             {isAuthed && (
               <span className="type-small mt-1.5 block text-secondary">
-                Email вашего аккаунта — заказ сохранится в кабинете.
+                Email вашего аккаунта: заказ сохранится в кабинете.
               </span>
             )}
           </label>

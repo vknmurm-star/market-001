@@ -21,7 +21,7 @@ export default function CartPage() {
       <div className="container-page py-20 text-center md:py-32">
         <h1 className="type-h3">Корзина пуста</h1>
         <p className="type-body mt-4 text-secondary">
-          Загляните в каталог — там много интересного.
+          Загляните в каталог: там много интересного.
         </p>
         <div className="mt-8">
           <Button href="/catalog" arrow>

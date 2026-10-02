@@ -75,7 +75,7 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
 
 export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
   online: "Онлайн-оплата картой (ЮKassa, тестовый режим)",
-  sbp: "СБП — Система быстрых платежей (тестовый режим)",
+  sbp: "СБП: система быстрых платежей (тестовый режим)",
   cash: "При получении",
 };
 
