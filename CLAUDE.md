@@ -1,9 +1,10 @@
-# Продакшен-конфигурация проекта «Маркет» (market-001)
+# Продакшен-конфигурация проекта «Beauty» (market-001)
 
-Интернет-магазин косметики на Next.js 16 + SQLite (`node:sqlite`), развёрнут на
-собственном VDS (kvm.an51.su, домен **beauty.an51.su**) по паттерну site-001,
-но со своими отличиями. При изменениях сохраняй логику ниже — не хардкодь то,
-что должно браться из окружения.
+Интернет-магазин косметики на Next.js 16 + SQLite (`node:sqlite`), домен
+**beauty.an51.su**. Работает на VDS **noemi** (IP 139.100.232.115, Ubuntu 24.04,
+SSH-алиас `noemi`). Сервер общий: на нём же живут другие проекты (site-001,
+finance-001, mv-004, andreev-realty и т.д.), их не трогай. При изменениях
+сохраняй логику ниже — не хардкодь то, что должно браться из окружения.
 
 ## 1. Стек и ключевое отличие от site-001
 
@@ -52,7 +53,7 @@ rate-limit по IP. Для IP за nginx нужны заголовки `X-Forwar
 ## 3. База данных и её персистентность
 
 - Файл БД: `data/market.db` (+ `-wal`/`-shm`). Каталог `data/` в `.gitignore` —
-  **при `git pull` в deploy.sh БД НЕ перезаписывается**, заказы и правки товаров
+  **при деплое (git fast-forward в `site-autodeploy.sh`) БД НЕ перезаписывается**, заказы и правки товаров
   сохраняются между деплоями. Не коммить `data/*.db`.
 - Схема и автосид — в `src/lib/db.ts` (`getDb()`): при первом обращении, если
   товаров нет, БД засевается из `src/data/seed.json` (24 товара, 6 категорий из
@@ -77,21 +78,37 @@ rate-limit по IP. Для IP за nginx нужны заголовки `X-Forwar
 ## 4. PM2 и nginx
 
 - PM2-процесс называется **`market-store`**, Next.js слушает порт **3001**
-  (порт 3000 занят site-001!). Порт задаётся при старте: `PORT=3001 pm2 start
-  npm --name market-store -- start`, затем `pm2 save`. Не переименовывай процесс
-  и не меняй порт без явной просьбы.
-- nginx — reverse proxy на `localhost:3001` с обязательными заголовками
-  `X-Forwarded-*` (конфиг `/etc/nginx/sites-available/market-store`). certbot на
-  стандартном 443, http→https редирект. Конфиг site-001/beauty.an51.su —
-  отдельный файл, market его не трогает.
+  (на этом сервере заняты также 3000 site-001, 3002 finance-001, 3003 mv-004,
+  3012 andreev-realty). Порт задаётся при старте: `PORT=3001 pm2 start npm --name
+  market-store -- start`, затем `pm2 save`. Не переименовывай процесс и не
+  меняй порт без явной просьбы.
+- nginx на noemi — reverse proxy beauty.an51.su на `localhost:3001` с
+  обязательными заголовками `X-Forwarded-*`. certbot на стандартном 443,
+  http→https редирект (301). Конфиги других сайтов на сервере отдельные,
+  market-store их не трогает.
 
 ## 5. Процесс деплоя
 
-- На сервере: `/var/www/market-store/deploy.sh`
-  (`git stash` → `git pull` → `git stash pop` → `npm install` → `npm run build`
-  → `pm2 restart market-store`), защита от параллельного запуска через flock.
-- Автопроверка новых коммитов — `auto-deploy-check.sh` по cron каждые 2 минуты.
-- Скрипты лежат в корне репозитория; на сервере им нужен `chmod +x`.
+- Деплой = пуш в ветку **master** (см. правила безопасности ниже: в master
+  только с явного разрешения). Дальше всё делает сервер сам.
+- Автодеплой: cron на noemi каждые 2 минуты запускает
+  `/root/bin/site-autodeploy.sh /var/www/market-store master market-store 3001`,
+  лог `/var/log/autodeploy-market-store.log`. Схема: `git fetch` → только
+  fast-forward (локальные правки на сервере блокируют деплой) → `npm ci`, если
+  изменился `package-lock.json` → `npm run build` (1 повтор) → `pm2 restart
+  market-store --update-env` → проверка порта. Если сборка упала дважды, скрипт
+  откатывает на прежний коммит и не пересобирает упавший, пока не появится новый.
+- Старые `deploy.sh` и `auto-deploy-check.sh` в корне репозитория больше не
+  используются cron'ом.
+- **Кэш картинок next/image.** Скрипт деплоя не удаляет `.next`, поэтому
+  `/var/www/market-store/.next/cache/images` переживает деплои (TTL Next 16: 4
+  часа). Если заменяешь картинки с теми же именами (`public/images/design/*`,
+  `public/images/products/*`), после деплоя очисти кэш вручную:
+  `rm -rf /var/www/market-store/.next/cache/images`. Новые имена файлов
+  чистки не требуют. При странном 500 после добавления роутов (stale client
+  manifest) помогает `rm -rf .next` и пересборка.
+- Любая работа на сервере по SSH (в том числе чистка кэша) только с явного
+  подтверждения в чате.
 
 ## 6. Маршруты
 
