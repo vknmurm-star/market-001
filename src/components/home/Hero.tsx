@@ -40,7 +40,7 @@ export default function Hero({ image }: { image: string | null }) {
       {/* вуаль в цвет фона: читаемость заголовка на любом фото */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-gradient-to-b from-background/85 via-background/55 to-background/30 md:bg-gradient-to-r md:from-background/95 md:via-background/60 md:to-transparent"
+        className="absolute inset-0 -z-10 bg-gradient-to-b from-background/40 via-background/75 to-background/90 md:bg-gradient-to-r md:from-background/95 md:via-background/60 md:to-transparent"
       />
 
       <div className="container-page flex min-h-[560px] items-center py-16 md:min-h-[640px] lg:min-h-[700px]">

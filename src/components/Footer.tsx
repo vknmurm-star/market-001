@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { SITE_NAME } from "@/lib/site";
+import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
 import type { Category } from "@/lib/types";
 import { MastercardMark, MirMark, SbpMark, VisaMark } from "./ui/icons";
 
@@ -9,8 +9,8 @@ const linkClass =
 
 /**
  * Подвал по макету: бренд, три колонки ссылок и колонка «Оплата».
- * Ссылки — только на реально существующие страницы; контакты (телефон,
- * email, часы работы) не выводим — на /contacts они помечены как демо.
+ * Ссылки — только на реально существующие страницы; из контактов выводим
+ * только email (телефона и часов работы у магазина нет).
  */
 export default function Footer({
   categories,
@@ -95,6 +95,11 @@ export default function Footer({
               <Link href="/contacts" className={linkClass}>
                 Контакты
               </Link>
+            </li>
+            <li>
+              <a href={`mailto:${CONTACT_EMAIL}`} className={linkClass}>
+                {CONTACT_EMAIL}
+              </a>
             </li>
           </ul>
         </nav>

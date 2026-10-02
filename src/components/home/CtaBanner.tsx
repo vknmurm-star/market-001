@@ -17,13 +17,17 @@ export default function CtaBanner({
   return (
     <section aria-labelledby="cta-title" className="relative isolate overflow-hidden bg-surface-alt">
       {image ? (
-        <Image
-          src={image}
-          alt=""
-          fill
-          sizes="100vw"
-          className="-z-20 object-cover object-[70%_center]"
-        />
+        // Фото сдвинуто вправо и плавно уходит в фон слева — флаконы не
+        // попадают под заголовок.
+        <div className="absolute inset-y-0 right-0 -z-20 w-full md:w-[68%] md:[mask-image:linear-gradient(to_right,transparent,#000_30%)]">
+          <Image
+            src={image}
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, 68vw"
+            className="object-cover"
+          />
+        </div>
       ) : null}
       <div
         aria-hidden

@@ -5,6 +5,9 @@ export const SITE_URL = (process.env.SITE_URL ?? "https://beauty.an51.su").repla
 
 export const SITE_NAME = "Beauty";
 
+/** Публичный email для связи (контакты, футер). Телефона и часов работы нет. */
+export const CONTACT_EMAIL = "market@an51.su";
+
 export const SITE_DESCRIPTION =
   "Интернет-магазин косметики и средств для красоты: уход за лицом и телом, волосы, макияж, парфюмерия и аксессуары. Доставка курьером и самовывоз.";
 
