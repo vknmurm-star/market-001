@@ -11,9 +11,16 @@
  *     центру товара (cx, доля ширины), затем масштабируем до 1024×1280.
  * Центры товаров подобраны вручную по исходникам (товар целиком с запасом).
  *
+ * Цветокоррекция (одинаковая для всех 24 фото): лёгкое осветление, насыщенность
+ * примерно на 18% ниже и сдвиг баланса от оранжевого к нейтрально-тёплому
+ * (чуть меньше красного, чуть больше синего), чтобы карточки были ближе к
+ * светлым кремовым тонам макета. Цвет самого товара остаётся узнаваемым.
+ *
  * Запуск:  node scripts/process-product-photos.mjs
  *   DRY_RUN=1  — только показать окна кадрирования, ничего не писать
  *   OUT=dir    — писать не в public/images/products, а в другую папку
+ *   BRIGHTNESS, SATURATION, WB_R, WB_B — подстройка коррекции (по умолчанию
+ *   значения ниже; BRIGHTNESS=1 SATURATION=1 WB_R=1 WB_B=1 даёт фото без правок)
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -22,6 +29,11 @@ import sharp from "sharp";
 const SRC = path.join(process.cwd(), "design", "products-new");
 const OUT = process.env.OUT || path.join(process.cwd(), "public", "images", "products");
 const DRY = process.env.DRY_RUN === "1";
+// Цветокоррекция
+const BRIGHTNESS = Number(process.env.BRIGHTNESS ?? 1.06); // чуть светлее
+const SATURATION = Number(process.env.SATURATION ?? 0.82); // −18%
+const WB_R = Number(process.env.WB_R ?? 0.97); // меньше красного/оранжевого
+const WB_B = Number(process.env.WB_B ?? 1.06); // чуть больше синего (нейтральнее)
 const W = 1024;
 const H = 1280; // 4:5
 
@@ -79,6 +91,8 @@ for (const file of fs.readdirSync(SRC).filter((f) => f.endsWith(".png")).sort())
   await img
     .extract({ left, top, width: w, height: h })
     .resize(W, H, { kernel: "lanczos3" })
+    .modulate({ brightness: BRIGHTNESS, saturation: SATURATION })
+    .linear([WB_R, 1, WB_B], [0, 0, 0])
     .jpeg({ quality: 92, mozjpeg: true, chromaSubsampling: "4:4:4" })
     .toFile(path.join(OUT, `${sku}.jpg`));
   n++;
