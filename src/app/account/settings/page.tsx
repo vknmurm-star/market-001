@@ -4,6 +4,8 @@ import { requireUser } from "@/lib/userAuth";
 import PasswordInput from "@/components/PasswordInput";
 import { changePasswordAction, updateProfileAction } from "../actions";
 
+import { inputClass, labelClass } from "@/components/ui/Input";
+import { buttonClass } from "@/components/ui/Button";
 export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -12,9 +14,6 @@ export const metadata: Metadata = {
   title: "Настройки профиля",
   robots: { index: false, follow: false },
 };
-
-const inputClass =
-  "w-full rounded-lg border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent";
 
 const OK_MESSAGES: Record<string, string> = {
   profile: "Профиль сохранён.",
@@ -41,12 +40,12 @@ export default async function SettingsPage({
       </div>
 
       {ok && (
-        <p className="mb-6 rounded-2xl border border-success/30 bg-success/10 px-4 py-3 text-sm text-success">
+        <p className="mb-6 rounded-sm border border-success/30 bg-success/10 px-5 py-4 text-sm text-success">
           {ok}
         </p>
       )}
       {error && (
-        <p className="mb-6 rounded-2xl bg-accent-soft px-4 py-3 text-sm text-accent-dark">
+        <p className="mb-6 rounded-sm bg-accent-soft px-5 py-4 text-sm text-accent-hover">
           {error}
         </p>
       )}
@@ -58,7 +57,7 @@ export default async function SettingsPage({
         >
           <h2 className="font-semibold">Личные данные</h2>
           <label className="block">
-            <span className="mb-1 block text-sm font-medium">Имя</span>
+            <span className={labelClass}>Имя</span>
             <input
               name="name"
               required
@@ -68,7 +67,7 @@ export default async function SettingsPage({
             />
           </label>
           <label className="block">
-            <span className="mb-1 block text-sm font-medium">Email</span>
+            <span className={labelClass}>Email</span>
             <input
               name="email"
               type="email"
@@ -77,13 +76,13 @@ export default async function SettingsPage({
               className={inputClass}
               autoComplete="email"
             />
-            <span className="mt-1 block text-xs text-muted">
+            <span className="mt-1 block text-xs text-secondary">
               При смене email история ваших заказов сохраняется.
             </span>
           </label>
           <button
             type="submit"
-            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-white hover:bg-accent-dark"
+            className={buttonClass("primary", "md")}
           >
             Сохранить профиль
           </button>
@@ -95,7 +94,7 @@ export default async function SettingsPage({
         >
           <h2 className="font-semibold">Смена пароля</h2>
           <label className="block">
-            <span className="mb-1 block text-sm font-medium">Текущий пароль</span>
+            <span className={labelClass}>Текущий пароль</span>
             <PasswordInput
               name="current"
               required
@@ -104,7 +103,7 @@ export default async function SettingsPage({
             />
           </label>
           <label className="block">
-            <span className="mb-1 block text-sm font-medium">Новый пароль</span>
+            <span className={labelClass}>Новый пароль</span>
             <PasswordInput
               name="next"
               required
@@ -112,10 +111,10 @@ export default async function SettingsPage({
               className={inputClass}
               autoComplete="new-password"
             />
-            <span className="mt-1 block text-xs text-muted">Минимум 6 символов.</span>
+            <span className="mt-1 block text-xs text-secondary">Минимум 6 символов.</span>
           </label>
           <label className="block">
-            <span className="mb-1 block text-sm font-medium">
+            <span className={labelClass}>
               Повторите новый пароль
             </span>
             <PasswordInput
@@ -128,7 +127,7 @@ export default async function SettingsPage({
           </label>
           <button
             type="submit"
-            className="rounded-full bg-accent px-6 py-2.5 font-semibold text-white hover:bg-accent-dark"
+            className={buttonClass("primary", "md")}
           >
             Изменить пароль
           </button>

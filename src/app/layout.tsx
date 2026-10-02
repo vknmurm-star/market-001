@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
+import AnnouncementBar from "@/components/AnnouncementBar";
 import { CartProvider } from "@/lib/cart";
 import { getCategories } from "@/lib/catalog";
 import { getSetting } from "@/lib/settings";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { fontVariables } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -63,15 +65,16 @@ export default function RootLayout({
   const logo = getSetting("site_logo");
 
   return (
-    <html lang="ru" className="h-full">
+    <html lang="ru" className={`h-full ${fontVariables}`}>
       <body className="flex min-h-full flex-col">
         <CartProvider>
           <a
             href="#main"
-            className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:left-4 focus:top-4 focus:rounded-full focus:bg-accent focus:px-5 focus:py-3 focus:text-white"
+            className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:left-4 focus:top-4 focus:rounded-sm focus:bg-accent focus:px-5 focus:py-3 focus:text-white"
           >
             Перейти к содержимому
           </a>
+          <AnnouncementBar />
           <Header categories={categories} logo={logo} />
           <main id="main" className="flex-1">
             {children}

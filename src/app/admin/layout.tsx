@@ -36,7 +36,7 @@ export default async function AdminLayout({
               </Link>
             </nav>
             <form action={logoutAction} className="ml-auto">
-              <button className="text-sm text-muted hover:text-accent">Выйти</button>
+              <button className="text-sm text-secondary hover:text-accent">Выйти</button>
             </form>
           </>
         )}

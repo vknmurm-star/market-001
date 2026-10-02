@@ -23,49 +23,50 @@ const PAYMENT = [
 
 export default function DeliveryPage() {
   return (
-    <div className="container-page py-8">
+    <div className="container-page pb-16 pt-8 md:pb-24 md:pt-12">
       <Breadcrumbs
         items={[
           { name: "Главная", href: "/" },
           { name: "Доставка и оплата", href: "/delivery" },
         ]}
       />
-      <div className="mt-6 max-w-3xl">
-        <h1 className="text-3xl font-bold">Доставка и оплата</h1>
+      <div className="mt-8 max-w-3xl md:mt-10">
+        <p className="type-caption mb-4 text-secondary">Покупателям</p>
+        <h1 className="type-h2">Доставка и оплата</h1>
 
-        <h2 className="mt-8 text-xl font-semibold">Доставка</h2>
-        <div className="mt-3 overflow-x-auto rounded-2xl border bg-card">
+        <h2 className="type-h4 mt-14">Доставка</h2>
+        <div className="mt-6 overflow-x-auto rounded-md bg-surface">
           <table className="w-full min-w-[520px] text-sm">
-            <thead className="border-b bg-background/60 text-left text-muted">
+            <thead className="type-caption border-b border-border text-left text-[11px] text-secondary">
               <tr>
-                <th className="px-4 py-3">Способ</th>
-                <th className="px-4 py-3">Срок</th>
-                <th className="px-4 py-3">Стоимость</th>
+                <th className="px-6 py-4 font-medium">Способ</th>
+                <th className="px-6 py-4 font-medium">Срок</th>
+                <th className="px-6 py-4 font-medium">Стоимость</th>
               </tr>
             </thead>
             <tbody>
               {DELIVERY.map(([m, t, p]) => (
-                <tr key={m} className="border-b last:border-0">
-                  <td className="px-4 py-3 font-medium">{m}</td>
-                  <td className="px-4 py-3 text-muted">{t}</td>
-                  <td className="px-4 py-3">{p}</td>
+                <tr key={m} className="border-b border-border-soft last:border-0">
+                  <td className="px-6 py-4 font-medium text-foreground">{m}</td>
+                  <td className="px-6 py-4 text-secondary">{t}</td>
+                  <td className="px-6 py-4 text-foreground">{p}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        <h2 className="mt-8 text-xl font-semibold">Оплата</h2>
-        <div className="mt-3 grid gap-4 sm:grid-cols-2">
+        <h2 className="type-h4 mt-14">Оплата</h2>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 md:gap-6">
           {PAYMENT.map(([m, d]) => (
-            <div key={m} className="rounded-2xl border bg-card p-5">
-              <div className="font-semibold">{m}</div>
-              <div className="mt-1 text-sm text-muted">{d}</div>
+            <div key={m} className="rounded-md bg-surface p-6 md:p-7">
+              <div className="font-display text-[26px] leading-tight">{m}</div>
+              <div className="type-small mt-2 text-secondary">{d}</div>
             </div>
           ))}
         </div>
 
-        <p className="mt-8 rounded-2xl bg-accent-soft p-4 text-sm text-accent-dark">
+        <p className="type-small mt-12 rounded-md bg-surface-alt p-5 text-secondary">
           Демонстрационный магазин: реальная доставка не выполняется, онлайн-оплата
           работает в тестовом режиме и не списывает деньги.
         </p>

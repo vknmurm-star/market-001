@@ -46,7 +46,7 @@ export default function ProductGallery({
         type="button"
         onClick={() => setZoom(true)}
         aria-label="Увеличить изображение"
-        className="group relative aspect-square cursor-zoom-in overflow-hidden rounded-3xl border bg-card"
+        className="group relative aspect-square cursor-zoom-in overflow-hidden rounded-md bg-surface-alt"
       >
         <Image
           src={main}
@@ -54,7 +54,7 @@ export default function ProductGallery({
           fill
           priority
           sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover transition group-hover:scale-[1.02]"
+          className="object-cover transition duration-300 ease-brand group-hover:scale-[1.02]"
         />
         <span
           aria-hidden
@@ -82,7 +82,7 @@ export default function ProductGallery({
               onClick={() => setActive(i)}
               aria-label={`Показать изображение ${i + 1}`}
               aria-current={i === active}
-              className={`relative aspect-square w-20 overflow-hidden rounded-xl border-2 bg-card transition ${
+              className={`relative aspect-square w-20 overflow-hidden rounded-sm border bg-surface transition ${
                 i === active
                   ? "border-accent"
                   : "border-transparent hover:border-border"

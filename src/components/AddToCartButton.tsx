@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 import { useCart, type CartItem } from "@/lib/cart";
+import { buttonClass } from "./ui/Button";
 
 export default function AddToCartButton({
   product,
   className = "",
+  size = "md",
 }: {
   product: Omit<CartItem, "quantity">;
   className?: string;
+  size?: "md" | "sm";
 }) {
   const { add, items } = useCart();
   const [added, setAdded] = useState(false);
@@ -28,10 +31,8 @@ export default function AddToCartButton({
       type="button"
       onClick={handleClick}
       disabled={soldOut || limitReached}
-      className={`rounded-full px-5 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
-        added
-          ? "bg-success text-white"
-          : "bg-accent text-white hover:bg-accent-dark"
+      className={`${buttonClass("primary", size)} ${
+        added ? "!bg-success hover:!bg-success" : ""
       } ${className}`}
     >
       {soldOut

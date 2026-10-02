@@ -1,108 +1,139 @@
-import fs from "node:fs";
-import path from "node:path";
-import Link from "next/link";
-import Image from "next/image";
-import { getCategories, getFeaturedProducts, getNewProducts } from "@/lib/catalog";
+import {
+  getCategories,
+  getFeaturedProducts,
+  getProducts,
+} from "@/lib/catalog";
+import { categoryPhoto, designImage } from "@/lib/designImages";
+import { plural } from "@/lib/format";
+import CategoryCard from "@/components/CategoryCard";
 import ProductGrid from "@/components/ProductGrid";
-import HomeHero from "@/components/HomeHero";
+import SectionHeading from "@/components/ui/SectionHeading";
+import Hero from "@/components/home/Hero";
+import Advantages from "@/components/home/Advantages";
+import Ritual, { type RitualStep } from "@/components/home/Ritual";
+import Values from "@/components/home/Values";
+import Reviews from "@/components/home/Reviews";
+import CtaBanner from "@/components/home/CtaBanner";
 
 export const revalidate = 60;
 
-/** Сгенерированное фото категории, если есть; иначе SVG-заглушка. */
-function categoryImage(slug: string): string {
-  const dir = path.join(process.cwd(), "public", "images", "categories");
-  for (const ext of ["jpg", "png", "webp"]) {
-    if (fs.existsSync(path.join(dir, `${slug}.${ext}`))) {
-      return `/images/categories/${slug}.${ext}`;
-    }
-  }
-  return `/products/${slug}.svg`;
-}
+// Ширины карточек категорий в 12-колоночной сетке (editorial: 3 + 3 разной ширины)
+const CATEGORY_SPANS = [
+  "lg:col-span-3",
+  "lg:col-span-5",
+  "lg:col-span-4",
+  "lg:col-span-5",
+  "lg:col-span-4",
+  "lg:col-span-3",
+];
+
+// Шаги ритуала — реальные товары из базы (по артикулу); если артикула нет,
+// берём следующие по популярности товары категории «Уход за лицом».
+const RITUAL = [
+  { title: "Очищение", sku: "FC-003", image: "ritual-1" },
+  { title: "Активный уход", sku: "FC-002", image: "ritual-2" },
+  { title: "Увлажнение", sku: "FC-001", image: "ritual-3" },
+];
 
 export default function HomePage() {
   const categories = getCategories();
-  const featured = getFeaturedProducts(8);
-  // Карусель в hero — новинки (последние добавленные), а не топ популярных:
-  // популярное уже показано отдельно ниже, в блоке «Популярные товары».
-  const newest = getNewProducts(10);
+  const all = getProducts();
+  const bestsellers = getFeaturedProducts(8);
+
+  const counts = new Map<string, number>();
+  for (const p of all) counts.set(p.categorySlug, (counts.get(p.categorySlug) ?? 0) + 1);
+
+  const face = all.filter((p) => p.categorySlug === "face-care");
+  const steps = RITUAL.flatMap((r, i): RitualStep[] => {
+    const product = all.find((p) => p.sku === r.sku) ?? face[i];
+    return product
+      ? [{ title: r.title, product, image: designImage(r.image) }]
+      : [];
+  });
+
+  const productsWord = plural(all.length, ["товар", "товара", "товаров"]);
+  const categoriesWord = plural(categories.length, [
+    "категории",
+    "категориях",
+    "категориях",
+  ]);
 
   return (
-    <div className="container-page pb-8 pt-12">
-      {/* Hero */}
-      <HomeHero
-        previewProducts={newest.map((p) => ({
-          slug: p.slug,
-          sku: p.sku,
-          name: p.name,
-          price: p.price,
-          oldPrice: p.oldPrice,
-          image: p.image,
-          description: p.description,
-          categoryName: p.categoryName,
-          stock: p.stock,
-        }))}
+    <>
+      <Hero image={designImage("hero")} />
+      <Advantages categoriesCount={categories.length} />
+
+      <section aria-labelledby="categories-title" className="section-y">
+        <div className="container-page">
+          <SectionHeading
+            as="h2"
+            size="h3"
+            title={<span id="categories-title">Категории</span>}
+            actionHref="/catalog"
+            actionLabel="Все категории"
+          />
+          <div className="mt-8 grid grid-cols-2 gap-3 md:mt-10 md:grid-cols-3 md:gap-4 lg:grid-cols-12 lg:gap-6">
+            {categories.map((c, i) => {
+              const n = counts.get(c.slug) ?? 0;
+              return (
+                <CategoryCard
+                  key={c.slug}
+                  href={`/catalog/${c.slug}`}
+                  name={c.name}
+                  meta={`${n} ${plural(n, ["товар", "товара", "товаров"])}`}
+                  image={categoryPhoto(c.slug)}
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 30vw"
+                  className={`aspect-[4/5] md:aspect-[4/3] lg:aspect-auto lg:h-[300px] ${
+                    CATEGORY_SPANS[i % CATEGORY_SPANS.length]
+                  }`}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="bestsellers-title" className="pb-16 md:pb-24">
+        <div className="container-page">
+          <SectionHeading
+            as="h2"
+            size="h3"
+            title={<span id="bestsellers-title">Бестселлеры</span>}
+            actionHref="/catalog"
+            actionLabel="Смотреть все"
+          />
+          <div className="mt-8 md:mt-10">
+            <ProductGrid products={bestsellers} />
+          </div>
+        </div>
+      </section>
+
+      {steps.length > 0 && (
+        <Ritual
+          steps={steps}
+          bannerImage={designImage("ritual-banner")}
+          categoryHref="/catalog/face-care"
+        />
+      )}
+
+      <Values
+        tiles={[
+          { title: "Внимание к деталям", image: designImage("values-1") ?? categoryPhoto("face-care") },
+          { title: "Спокойный ритуал", image: designImage("values-2") ?? categoryPhoto("body-care") },
+          { title: "Забота о себе", image: designImage("values-3") ?? categoryPhoto("perfume") },
+        ]}
       />
 
-      {/* Преимущества */}
-      <section className="mb-12 grid grid-cols-2 gap-4 md:grid-cols-4">
-        {[
-          ["🚚", "Доставка по России", "Курьером или самовывоз"],
-          ["💳", "Удобная оплата", "Онлайн или при получении"],
-          ["🧴", "Большой выбор", "Косметика в 6 категориях"],
-          ["↩️", "Возврат 14 дней", "Если товар не подошёл"],
-        ].map(([icon, title, sub]) => (
-          <div
-            key={title}
-            className="flex items-start gap-3 rounded-2xl border bg-card p-4"
-          >
-            <span className="text-2xl" aria-hidden>
-              {icon}
-            </span>
-            <div>
-              <div className="text-sm font-semibold leading-tight">{title}</div>
-              <div className="mt-0.5 text-xs text-muted">{sub}</div>
-            </div>
-          </div>
-        ))}
-      </section>
+      <Reviews />
 
-      {/* Категории */}
-      <section className="mb-12">
-        <h2 className="mb-5 text-2xl font-bold">Категории</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          {categories.map((c) => (
-            <Link
-              key={c.slug}
-              href={`/catalog/${c.slug}`}
-              className="group flex flex-col items-center gap-3 rounded-2xl border bg-card p-4 text-center transition hover:shadow-md"
-            >
-              <div className="relative aspect-square w-full overflow-hidden rounded-xl">
-                <Image
-                  src={categoryImage(c.slug)}
-                  alt={c.name}
-                  fill
-                  sizes="(max-width: 640px) 45vw, 15vw"
-                  className="object-cover transition group-hover:scale-105"
-                />
-              </div>
-              <span className="text-sm font-medium leading-tight group-hover:text-accent">
-                {c.name}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Популярные товары */}
-      <section>
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Популярные товары</h2>
-          <Link href="/catalog" className="text-sm font-medium text-accent hover:underline">
-            Смотреть все →
-          </Link>
-        </div>
-        <ProductGrid products={featured} />
-      </section>
-    </div>
+      {/* -mb-24 гасит верхний отступ подвала: баннер примыкает к нему вплотную */}
+      <div className="-mb-24">
+        <CtaBanner
+          image={designImage("cta-banner")}
+          productsCount={`${all.length} ${productsWord}`}
+          categoriesText={`в ${categories.length} ${categoriesWord}`}
+        />
+      </div>
+    </>
   );
 }

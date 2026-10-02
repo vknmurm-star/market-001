@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { SortKey } from "@/lib/catalog";
+import { inputSmClass } from "./ui/Input";
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: "popular", label: "По популярности" },
@@ -9,6 +10,8 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: "price-asc", label: "Сначала дешёвые" },
   { value: "price-desc", label: "Сначала дорогие" },
 ];
+
+const labelCls = "type-caption mb-2 block text-[11px] text-secondary";
 
 export default function CatalogControls({
   bounds,
@@ -30,7 +33,7 @@ export default function CatalogControls({
 
   return (
     <form
-      className="flex flex-wrap items-end gap-4 rounded-2xl border bg-card p-4"
+      className="flex flex-wrap items-end gap-x-8 gap-y-5 border-y border-border py-6"
       onSubmit={(e) => {
         e.preventDefault();
         const fd = new FormData(e.currentTarget);
@@ -40,41 +43,51 @@ export default function CatalogControls({
         });
       }}
     >
-      <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-muted">Цена, ₽</label>
+      <div>
+        <label htmlFor="price-min" className={labelCls}>
+          Цена, ₽
+        </label>
         <div className="flex items-center gap-2">
           <input
+            id="price-min"
             name="min"
             type="number"
             min={0}
             defaultValue={params.get("min") ?? ""}
             placeholder={String(bounds.min)}
-            className="w-24 rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+            aria-label="Цена от"
+            className={`${inputSmClass} w-28`}
           />
-          <span className="text-muted">—</span>
+          <span className="text-secondary" aria-hidden>
+            —
+          </span>
           <input
             name="max"
             type="number"
             min={0}
             defaultValue={params.get("max") ?? ""}
             placeholder={String(bounds.max)}
-            className="w-24 rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+            aria-label="Цена до"
+            className={`${inputSmClass} w-28`}
           />
           <button
             type="submit"
-            className="rounded-lg bg-accent-soft px-3 py-2 text-sm font-medium text-accent-dark hover:bg-accent hover:text-white"
+            className="type-button h-12 rounded-sm border border-[#d8cfc5] px-5 text-[14px] text-foreground transition ease-brand hover:bg-surface-alt"
           >
             ОК
           </button>
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-muted">Сортировка</label>
+      <div>
+        <label htmlFor="sort" className={labelCls}>
+          Сортировка
+        </label>
         <select
+          id="sort"
           defaultValue={params.get("sort") ?? "popular"}
           onChange={(e) => update({ sort: e.target.value })}
-          className="rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+          className={`${inputSmClass} min-w-52`}
         >
           {SORT_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -88,7 +101,7 @@ export default function CatalogControls({
         <button
           type="button"
           onClick={() => update({ min: null, max: null, q: null })}
-          className="ml-auto text-sm text-muted underline hover:text-accent"
+          className="link-underline type-small ml-auto pb-3 text-secondary transition-colors ease-brand hover:text-accent"
         >
           Сбросить фильтры
         </button>

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOrderByNumber } from "@/lib/orders";
 import { formatPrice } from "@/lib/site";
+import Button from "@/components/ui/Button";
 import {
   DELIVERY_METHOD_LABELS,
   PAYMENT_METHOD_LABELS,
@@ -24,57 +24,59 @@ export default async function OrderPage({ params }: { params: Params }) {
   if (!order) notFound();
 
   return (
-    <div className="container-page py-10">
+    <div className="container-page pb-16 pt-10 md:pb-24 md:pt-16">
       <div className="mx-auto max-w-2xl">
-        <div className="rounded-3xl border bg-card p-8 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent-soft text-3xl text-success">
+        <div className="rounded-md bg-surface p-8 text-center md:p-12">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-accent-light text-2xl text-accent">
             ✓
           </div>
-          <h1 className="mt-4 text-2xl font-bold">Заказ оформлен!</h1>
-          <p className="mt-2 text-muted">
+          <h1 className="type-h3 mt-6">Заказ оформлен</h1>
+          <p className="type-body mt-4 text-secondary">
             Спасибо за заказ. Номер вашего заказа:
           </p>
-          <div className="mt-2 text-2xl font-bold text-accent">
+          <div className="mt-2 font-display text-[40px] leading-none text-accent">
             {order.orderNumber}
           </div>
-          <p className="mt-2 text-sm text-muted">
+          <p className="type-small mt-5 text-secondary">
             Статус: {ORDER_STATUS_LABELS[order.status]}. Мы свяжемся с вами по
             телефону {order.phone} для подтверждения.
           </p>
         </div>
 
-        <div className="mt-6 rounded-2xl border bg-card p-6">
-          <h2 className="mb-3 font-semibold">Состав заказа</h2>
-          <ul className="space-y-2 text-sm">
+        <div className="mt-6 rounded-md bg-surface p-7 md:p-10">
+          <h2 className="type-caption mb-5 text-secondary">Состав заказа</h2>
+          <ul className="space-y-3 text-[15px]">
             {order.items?.map((i) => (
-              <li key={i.id} className="flex justify-between gap-2">
-                <span className="text-muted">
+              <li key={i.id} className="flex justify-between gap-4">
+                <span className="text-secondary">
                   {i.name} × {i.quantity}
                 </span>
-                <span className="whitespace-nowrap">
+                <span className="whitespace-nowrap text-foreground">
                   {formatPrice(i.price * i.quantity)}
                 </span>
               </li>
             ))}
           </ul>
-          <div className="mt-3 flex justify-between border-t pt-3 text-lg font-bold">
-            <span>Итого</span>
-            <span>{formatPrice(order.total)}</span>
+          <div className="mt-5 flex items-baseline justify-between border-t border-border pt-5">
+            <span className="type-body text-secondary">Итого</span>
+            <span className="text-[28px] font-semibold leading-none">
+              {formatPrice(order.total)}
+            </span>
           </div>
-          <dl className="mt-4 space-y-1 border-t pt-4 text-sm text-muted">
-            <div className="flex justify-between">
+          <dl className="type-small mt-6 space-y-2 border-t border-border pt-6 text-secondary">
+            <div className="flex justify-between gap-4">
               <dt>Получатель</dt>
-              <dd className="text-foreground">{order.customerName}</dd>
+              <dd className="text-right text-foreground">{order.customerName}</dd>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-4">
               <dt>Оплата</dt>
-              <dd className="text-foreground">
+              <dd className="text-right text-foreground">
                 {PAYMENT_METHOD_LABELS[order.paymentMethod]}
               </dd>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-4">
               <dt>Доставка</dt>
-              <dd className="text-foreground">
+              <dd className="text-right text-foreground">
                 {DELIVERY_METHOD_LABELS[order.deliveryMethod]}
               </dd>
             </div>
@@ -87,19 +89,13 @@ export default async function OrderPage({ params }: { params: Params }) {
           </dl>
         </div>
 
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/catalog"
-            className="rounded-full bg-accent px-6 py-3 font-semibold text-white hover:bg-accent-dark"
-          >
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Button href="/catalog" arrow>
             Продолжить покупки
-          </Link>
-          <Link
-            href="/account"
-            className="rounded-full border border-accent px-6 py-3 font-semibold text-accent-dark hover:bg-accent-soft"
-          >
+          </Button>
+          <Button href="/account" variant="secondary">
             Мои заказы
-          </Link>
+          </Button>
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ export default function NotFound() {
     <div className="container-page py-24 text-center">
       <div className="text-6xl font-bold text-accent">404</div>
       <h1 className="mt-4 text-2xl font-bold">Страница не найдена</h1>
-      <p className="mt-2 text-muted">
+      <p className="mt-2 text-secondary">
         Возможно, товар снят с продажи или ссылка устарела.
       </p>
       <Link

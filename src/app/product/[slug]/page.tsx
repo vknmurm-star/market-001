@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductBySlug, getRelatedProducts } from "@/lib/catalog";
 import { getProductImages } from "@/lib/adminData";
-import { absoluteUrl, formatPrice, SITE_NAME, SITE_URL } from "@/lib/site";
+import { absoluteUrl, formatPrice, SITE_NAME } from "@/lib/site";
 import PriceTag from "@/components/PriceTag";
 import AddToCartButton from "@/components/AddToCartButton";
 import ProductGrid from "@/components/ProductGrid";
 import ProductGallery from "@/components/ProductGallery";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import SectionHeading from "@/components/ui/SectionHeading";
+import { CardIcon, ReturnIcon, TruckIcon } from "@/components/ui/icons";
 
 export const revalidate = 60;
 
@@ -83,7 +86,7 @@ export default async function ProductPage({ params }: { params: Params }) {
   };
 
   return (
-    <div className="container-page py-8">
+    <div className="container-page pb-16 pt-8 md:pb-24 md:pt-12">
       <Breadcrumbs
         items={[
           { name: "Главная", href: "/" },
@@ -93,42 +96,40 @@ export default async function ProductPage({ params }: { params: Params }) {
         ]}
       />
 
-      <div className="mt-6 grid gap-8 md:grid-cols-2">
+      <div className="mt-8 grid gap-10 md:mt-10 lg:grid-cols-[7fr_5fr] lg:gap-16">
         <ProductGallery
           images={gallery}
           alt={`${product.name} — ${product.categoryName}`}
         />
 
-        <div className="flex flex-col">
-          <span className="text-sm uppercase tracking-wide text-muted">
+        <div className="flex flex-col lg:pt-4">
+          <Link
+            href={`/catalog/${product.categorySlug}`}
+            className="type-caption link-underline w-fit text-secondary transition-colors ease-brand hover:text-accent"
+          >
             {product.categoryName}
-          </span>
-          <h1 className="mt-1 text-3xl font-bold leading-tight">{product.name}</h1>
-          <div className="mt-2 text-sm text-muted">Артикул: {product.sku}</div>
+          </Link>
+          <h1 className="type-h3 mt-4">{product.name}</h1>
+          <p className="type-small mt-3 text-secondary">Артикул: {product.sku}</p>
 
-          <div className="mt-5">
+          <div className="mt-7">
             <PriceTag price={product.price} oldPrice={product.oldPrice} size="lg" />
           </div>
 
-          <div className="mt-3">
-            {product.stock > 0 ? (
-              <span className="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 text-sm text-success">
-                ● В наличии: {product.stock} шт.
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-2 rounded-full bg-background px-3 py-1 text-sm text-muted">
-                ● Нет в наличии
-              </span>
-            )}
-          </div>
-
-          <p className="mt-5 leading-relaxed text-foreground/90">
-            {product.description}
+          <p
+            className={`type-small mt-4 inline-flex items-center gap-2 ${
+              product.stock > 0 ? "text-success" : "text-secondary"
+            }`}
+          >
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-current" />
+            {product.stock > 0 ? `В наличии: ${product.stock} шт.` : "Нет в наличии"}
           </p>
 
-          <div className="mt-6 flex items-center gap-4">
+          <p className="type-body mt-7 text-secondary">{product.description}</p>
+
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
             <AddToCartButton
-              className="px-8 py-3 text-base"
+              className="min-w-56"
               product={{
                 id: product.id,
                 slug: product.slug,
@@ -139,23 +140,34 @@ export default async function ProductPage({ params }: { params: Params }) {
                 stock: product.stock,
               }}
             />
-            <span className="text-sm text-muted">
+            <span className="type-small text-secondary">
               {formatPrice(product.price)} / шт.
             </span>
           </div>
 
-          <ul className="mt-8 space-y-2 border-t pt-6 text-sm text-muted">
-            <li>🚚 Доставка курьером по России или самовывоз</li>
-            <li>💳 Оплата онлайн или при получении</li>
-            <li>↩️ Возврат в течение 14 дней</li>
+          <ul className="type-small mt-10 space-y-3 border-t border-border pt-7 text-secondary">
+            <li className="flex items-center gap-3">
+              <TruckIcon size={22} className="shrink-0 text-accent" />
+              Доставка курьером по России или самовывоз
+            </li>
+            <li className="flex items-center gap-3">
+              <CardIcon size={22} className="shrink-0 text-accent" />
+              Оплата онлайн или при получении
+            </li>
+            <li className="flex items-center gap-3">
+              <ReturnIcon size={22} className="shrink-0 text-accent" />
+              Возврат в течение 14 дней
+            </li>
           </ul>
         </div>
       </div>
 
       {related.length > 0 && (
-        <section className="mt-14">
-          <h2 className="mb-5 text-2xl font-bold">Похожие товары</h2>
-          <ProductGrid products={related} />
+        <section className="mt-20 md:mt-28">
+          <SectionHeading as="h2" size="h3" title="Похожие товары" />
+          <div className="mt-8 md:mt-10">
+            <ProductGrid products={related} />
+          </div>
         </section>
       )}
 

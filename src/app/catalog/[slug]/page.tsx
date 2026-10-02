@@ -80,7 +80,7 @@ export default async function CategoryPage({
   };
 
   return (
-    <div className="container-page py-8">
+    <div className="container-page pb-16 pt-8 md:pb-24 md:pt-12">
       <Breadcrumbs
         items={[
           { name: "Главная", href: "/" },
@@ -89,10 +89,15 @@ export default async function CategoryPage({
         ]}
       />
 
-      <h1 className="mb-2 mt-4 text-3xl font-bold">{category.name}</h1>
-      <p className="mb-6 text-muted">Найдено товаров: {products.length}</p>
+      <header className="mt-8 md:mt-10">
+        <p className="type-caption mb-4 text-secondary">Категория</p>
+        <h1 className="type-h2">{category.name}</h1>
+        <p className="type-body mt-4 text-secondary">
+          Найдено товаров: {products.length}
+        </p>
+      </header>
 
-      <div className="mb-6">
+      <div className="my-8 md:my-10">
         <CatalogControls bounds={bounds} />
       </div>
 

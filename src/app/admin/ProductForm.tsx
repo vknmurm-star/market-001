@@ -111,7 +111,7 @@ export default function ProductForm({
       <div className="space-y-3 rounded-xl border bg-background/50 p-4">
         <span className="block text-sm font-medium">Изображения товара</span>
         {images.length === 0 && (
-          <div className="flex items-center gap-3 text-sm text-muted">
+          <div className="flex items-center gap-3 text-sm text-secondary">
             <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border bg-card">
               <ImageZoom
                 src={product?.image || "/products/accessories.svg"}
@@ -135,7 +135,7 @@ export default function ProductForm({
         >
           Сохранить
         </button>
-        <Link href="/admin" className="text-sm text-muted hover:text-accent">
+        <Link href="/admin" className="text-sm text-secondary hover:text-accent">
           Отмена
         </Link>
       </div>

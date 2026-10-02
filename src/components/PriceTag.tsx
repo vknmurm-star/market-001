@@ -9,12 +9,15 @@ export default function PriceTag({
   oldPrice?: number | null;
   size?: "md" | "lg";
 }) {
-  const priceClass = size === "lg" ? "text-2xl font-bold" : "text-lg font-semibold";
+  const priceClass =
+    size === "lg"
+      ? "text-[28px] font-semibold leading-none"
+      : "text-[17px] font-semibold leading-none";
   return (
-    <div className="flex items-baseline gap-2">
+    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
       <span className={`${priceClass} text-foreground`}>{formatPrice(price)}</span>
       {oldPrice && oldPrice > price && (
-        <span className="text-sm text-muted line-through">
+        <span className="text-sm text-secondary line-through">
           {formatPrice(oldPrice)}
         </span>
       )}

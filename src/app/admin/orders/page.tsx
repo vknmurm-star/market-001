@@ -28,7 +28,7 @@ export default async function AdminOrdersPage() {
       <h1 className="mb-6 text-2xl font-bold">Заказы</h1>
 
       {orders.length === 0 && (
-        <div className="rounded-2xl border bg-card p-10 text-center text-muted">
+        <div className="rounded-2xl border bg-card p-10 text-center text-secondary">
           Заказов пока нет.
         </div>
       )}
@@ -39,18 +39,18 @@ export default async function AdminOrdersPage() {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <span className="font-semibold text-accent">{o.orderNumber}</span>
-                <span className="ml-3 text-sm text-muted">
+                <span className="ml-3 text-sm text-secondary">
                   {new Date(o.createdAt).toLocaleString("ru-RU")}
                 </span>
                 <div className="mt-1 text-sm">
                   {o.customerName} · {o.phone} · {o.email}
                 </div>
-                <div className="text-sm text-muted">
+                <div className="text-sm text-secondary">
                   Доставка: {DELIVERY_METHOD_LABELS[o.deliveryMethod]}
                   {o.address ? ` · ${o.address}` : ""}
                 </div>
                 {o.comment && (
-                  <div className="text-sm text-muted">Комментарий: {o.comment}</div>
+                  <div className="text-sm text-secondary">Комментарий: {o.comment}</div>
                 )}
               </div>
               <span
@@ -63,7 +63,7 @@ export default async function AdminOrdersPage() {
             <ul className="mt-3 space-y-1 border-t pt-3 text-sm">
               {o.items?.map((i) => (
                 <li key={i.id} className="flex justify-between gap-2">
-                  <span className="text-muted">
+                  <span className="text-secondary">
                     {i.name} <span className="text-xs">({i.sku})</span> × {i.quantity}
                   </span>
                   <span>{formatPrice(i.price * i.quantity)}</span>
@@ -72,7 +72,7 @@ export default async function AdminOrdersPage() {
             </ul>
 
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t pt-3">
-              <span className="text-sm text-muted">
+              <span className="text-sm text-secondary">
                 {PAYMENT_METHOD_LABELS[o.paymentMethod]}
               </span>
               <div className="flex items-center gap-3">

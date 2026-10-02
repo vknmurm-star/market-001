@@ -53,7 +53,7 @@ export default async function AdminSettingsPage({
               <span className="text-lg font-bold text-accent">Beauty</span>
             )}
           </div>
-          <span className="text-sm text-muted">
+          <span className="text-sm text-secondary">
             {logo
               ? "Сейчас в шапке показывается загруженный логотип."
               : "Логотип не задан — в шапке текст «Beauty»."}
@@ -74,9 +74,9 @@ export default async function AdminSettingsPage({
               name="logoFile"
               required
               accept="image/png,image/jpeg,image/webp,image/svg+xml"
-              className="block w-full text-sm text-muted file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-accent-dark"
+              className="block w-full text-sm text-secondary file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-accent-dark"
             />
-            <span className="mt-1 block text-xs text-muted">
+            <span className="mt-1 block text-xs text-secondary">
               PNG, JPG, WEBP или SVG, до 2 МБ. Лучше — горизонтальный, на
               прозрачном фоне. Заменит текстовую надпись «Beauty» в шапке.
             </span>
@@ -93,7 +93,7 @@ export default async function AdminSettingsPage({
 
         {logo && (
           <form action={removeLogoAction} className="border-t pt-4">
-            <button className="text-sm text-muted underline hover:text-accent">
+            <button className="text-sm text-secondary underline hover:text-accent">
               Удалить логотип (вернуть текст)
             </button>
           </form>

@@ -10,16 +10,17 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="container-page py-8">
+    <div className="container-page pb-16 pt-8 md:pb-24 md:pt-12">
       <Breadcrumbs
         items={[
           { name: "Главная", href: "/" },
           { name: "О магазине", href: "/about" },
         ]}
       />
-      <div className="mt-6 max-w-3xl">
-        <h1 className="text-3xl font-bold">О магазине</h1>
-        <div className="mt-5 space-y-4 leading-relaxed text-foreground/90">
+      <div className="mt-8 max-w-3xl md:mt-10">
+        <p className="type-caption mb-4 text-secondary">Beauty</p>
+        <h1 className="type-h2">О магазине</h1>
+        <div className="type-body-lg mt-8 space-y-5 text-secondary">
           <p>
             «Beauty» — интернет-магазин косметики и средств для красоты. Мы
             собрали в одном месте уход за лицом и телом, средства для волос,
@@ -38,20 +39,20 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        <div className="mt-12 grid gap-4 sm:grid-cols-3 md:gap-6">
           {[
             ["Большой выбор", "Косметика и уход в 6 категориях"],
             ["Честные цены", "Актуальная стоимость и остатки"],
             ["Удобная доставка", "Курьер по России и самовывоз"],
           ].map(([t, d]) => (
-            <div key={t} className="rounded-2xl border bg-card p-5">
-              <div className="font-semibold">{t}</div>
-              <div className="mt-1 text-sm text-muted">{d}</div>
+            <div key={t} className="rounded-md bg-surface p-6 md:p-7">
+              <div className="font-display text-[26px] leading-tight">{t}</div>
+              <div className="type-small mt-2 text-secondary">{d}</div>
             </div>
           ))}
         </div>
 
-        <p className="mt-8 rounded-2xl bg-accent-soft p-4 text-sm text-accent-dark">
+        <p className="type-small mt-12 rounded-md bg-surface-alt p-5 text-secondary">
           Обратите внимание: это демонстрационный магазин, созданный как
           портфолио-проект. Заказы не обрабатываются, оплата работает в тестовом
           режиме.

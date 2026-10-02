@@ -62,13 +62,13 @@ export default function CookieBanner() {
       ref={bannerRef}
       role="region"
       aria-label="Уведомление об использовании cookies"
-      className="fixed inset-x-0 bottom-0 z-50 p-1.5 sm:p-4"
+      className="fixed inset-x-0 bottom-0 z-50 p-2 sm:p-4"
     >
       {/* На мобильных — тонкая однострочная полоса (не блок на треть экрана,
           который на коротких страницах закрывает цену/кнопку «В корзину»
-          первого ряда товаров); от sm: — прежний просторный вид. */}
-      <div className="container-page flex items-center gap-2 rounded-lg border border-accent-soft bg-card px-3 py-1.5 shadow-lg sm:gap-4 sm:rounded-2xl sm:p-4">
-        <p className="min-w-0 flex-1 text-xs leading-snug text-muted sm:text-sm">
+          первого ряда товаров); от sm: — просторная плашка. */}
+      <div className="mx-auto flex max-w-container items-center gap-3 rounded-md border border-border bg-surface px-4 py-2 shadow-[0_12px_30px_rgba(0,0,0,0.08)] sm:gap-6 sm:px-6 sm:py-4">
+        <p className="min-w-0 flex-1 text-xs leading-snug text-secondary sm:text-sm">
           <span className="sm:hidden">Мы используем cookies для корзины и входа.</span>
           <span className="hidden sm:inline">
             Мы используем cookies, чтобы работали корзина и вход в аккаунт.
@@ -78,7 +78,7 @@ export default function CookieBanner() {
         <button
           type="button"
           onClick={accept}
-          className="shrink-0 rounded-full bg-accent px-4 py-1 text-xs font-semibold text-white transition hover:bg-accent-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 sm:ml-auto sm:px-6 sm:py-2 sm:text-sm"
+          className="type-button h-9 shrink-0 rounded-sm bg-accent px-4 text-[13px] text-white transition ease-brand hover:bg-accent-hover sm:h-11 sm:px-6 sm:text-[15px]"
         >
           Принять
         </button>

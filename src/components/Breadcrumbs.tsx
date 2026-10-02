@@ -19,17 +19,26 @@ export default function Breadcrumbs({ items }: { items: Crumb[] }) {
   };
 
   return (
-    <nav aria-label="Хлебные крошки" className="text-sm text-muted">
-      <ol className="flex flex-wrap items-center gap-1">
+    <nav aria-label="Хлебные крошки" className="type-small text-secondary">
+      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
         {items.map((c, i) => (
-          <li key={c.href} className="flex items-center gap-1">
-            {i > 0 && <span aria-hidden>/</span>}
+          <li key={c.href} className="flex items-center gap-2">
+            {i > 0 && (
+              <span aria-hidden className="text-border">
+                /
+              </span>
+            )}
             {i < items.length - 1 ? (
-              <Link href={c.href} className="hover:text-accent">
+              <Link
+                href={c.href}
+                className="link-underline transition-colors ease-brand hover:text-accent"
+              >
                 {c.name}
               </Link>
             ) : (
-              <span className="text-foreground">{c.name}</span>
+              <span className="text-foreground" aria-current="page">
+                {c.name}
+              </span>
             )}
           </li>
         ))}

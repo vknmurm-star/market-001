@@ -5,75 +5,87 @@ import { productBadges } from "@/lib/badges";
 import PriceTag from "./PriceTag";
 import AddToCartButton from "./AddToCartButton";
 
-export default function ProductCard({ product }: { product: Product }) {
+/**
+ * Карточка товара по DESIGN.md: фон surface, радиус 8, фото 4/5, отступ 20.
+ * Hover — подъём на 4px и мягкая тень. Кнопка «В корзину» на устройствах с
+ * hover появляется при наведении/фокусе, на сенсорных видна всегда
+ * (см. .card-cta в globals.css).
+ */
+export default function ProductCard({
+  product,
+  priority = false,
+}: {
+  product: Product;
+  priority?: boolean;
+}) {
   const { discount, isHit, isNew } = productBadges(product);
+  const badge =
+    "type-caption rounded-sm px-2 py-1 text-[10px] leading-none tracking-[0.12em]";
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border bg-card transition hover:shadow-lg">
+    <article className="product-card group relative flex flex-col overflow-hidden rounded-md bg-surface transition duration-300 ease-brand hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(0,0,0,0.06)]">
       <Link
         href={`/product/${product.slug}`}
-        className="relative block aspect-square overflow-hidden bg-background"
+        className="relative block aspect-[4/5] overflow-hidden bg-surface-alt"
+        tabIndex={-1}
+        aria-hidden="true"
       >
-        <div className="absolute left-3 top-3 z-10 flex flex-col gap-1">
+        <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1.5">
           {discount > 0 && (
-            <span className="w-fit rounded-full bg-accent px-2 py-1 text-xs font-bold text-white">
-              −{discount}%
-            </span>
+            <span className={`${badge} bg-accent text-white`}>−{discount}%</span>
           )}
           {isHit && (
-            <span className="w-fit rounded-full bg-amber-500 px-2 py-1 text-xs font-bold text-white">
-              Хит
-            </span>
+            <span className={`${badge} bg-surface text-foreground`}>Хит</span>
           )}
           {isNew && (
-            <span className="w-fit rounded-full bg-success px-2 py-1 text-xs font-bold text-white">
-              Новинка
-            </span>
+            <span className={`${badge} bg-surface text-foreground`}>Новинка</span>
           )}
         </div>
         <Image
           src={product.image ?? "/products/accessories.svg"}
           alt={`${product.name} — ${product.categoryName}`}
           fill
-          sizes="(max-width: 768px) 50vw, 25vw"
-          className="object-cover transition duration-300 group-hover:scale-105"
+          preload={priority}
+          sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
+          className="object-cover transition-transform duration-300 ease-brand group-hover:scale-[1.03]"
         />
       </Link>
 
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      <div className="flex flex-1 flex-col p-4 md:p-5">
         <Link href={`/product/${product.slug}`} className="flex-1">
-          <span className="text-xs uppercase tracking-wide text-muted">
+          <span className="type-caption text-[10px] tracking-[0.14em] text-secondary">
             {product.categoryName}
           </span>
-          <h3 className="mt-1 line-clamp-2 text-sm font-medium leading-snug hover:text-accent">
+          <h3 className="mt-1.5 line-clamp-2 font-sans text-[15px] font-medium leading-snug text-foreground transition-colors ease-brand group-hover:text-accent">
             {product.name}
           </h3>
         </Link>
 
-        <PriceTag price={product.price} oldPrice={product.oldPrice} />
-
-        <div className="flex items-center justify-between">
-          <span
-            className={`text-xs ${
-              product.stock > 0 ? "text-success" : "text-muted"
-            }`}
-          >
-            {product.stock > 0 ? `В наличии: ${product.stock}` : "Нет в наличии"}
-          </span>
-          <AddToCartButton
-            className="px-4 py-2"
-            product={{
-              id: product.id,
-              slug: product.slug,
-              sku: product.sku,
-              name: product.name,
-              price: product.price,
-              image: product.image,
-              stock: product.stock,
-            }}
-          />
+        <div className="mt-3">
+          <PriceTag price={product.price} oldPrice={product.oldPrice} />
         </div>
+        <p
+          className={`mt-1.5 text-xs ${
+            product.stock > 0 ? "text-success" : "text-secondary"
+          }`}
+        >
+          {product.stock > 0 ? `В наличии: ${product.stock}` : "Нет в наличии"}
+        </p>
+
+        <AddToCartButton
+          size="sm"
+          className="card-cta mt-4"
+          product={{
+            id: product.id,
+            slug: product.slug,
+            sku: product.sku,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            stock: product.stock,
+          }}
+        />
       </div>
-    </div>
+    </article>
   );
 }

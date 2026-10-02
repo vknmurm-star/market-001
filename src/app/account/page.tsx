@@ -8,6 +8,7 @@ import {
   ORDER_STATUS_LABELS,
   PAYMENT_METHOD_LABELS,
 } from "@/lib/types";
+import Button from "@/components/ui/Button";
 import { logoutAction } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -23,72 +24,69 @@ export default async function AccountPage() {
   const orders = getOrdersByEmail(user.email);
 
   return (
-    <div className="container-page py-8">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div className="container-page pb-16 pt-10 md:pb-24 md:pt-14">
+      <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Личный кабинет</h1>
-          <p className="mt-1 text-muted">
+          <h1 className="type-h3">Личный кабинет</h1>
+          <p className="type-body mt-3 text-secondary">
             {user.name ? `${user.name} · ` : ""}
             {user.email}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Link
-            href="/account/settings"
-            className="rounded-full border border-accent px-5 py-2 text-sm font-semibold text-accent-dark hover:bg-accent-soft"
-          >
+          <Button href="/account/settings" variant="secondary" size="sm">
             Настройки
-          </Link>
+          </Button>
           <form action={logoutAction}>
-            <button className="rounded-full border border-accent px-5 py-2 text-sm font-semibold text-accent-dark hover:bg-accent-soft">
+            <Button type="submit" variant="secondary" size="sm">
               Выйти
-            </button>
+            </Button>
           </form>
         </div>
       </div>
 
-      <h2 className="mb-4 text-xl font-semibold">Мои заказы</h2>
+      <h2 className="type-h4 mb-6">Мои заказы</h2>
 
       {orders.length === 0 ? (
-        <div className="rounded-2xl border bg-card p-10 text-center text-muted">
+        <div className="rounded-md bg-surface p-12 text-center text-secondary">
           У вас пока нет заказов.{" "}
-          <Link href="/catalog" className="text-accent hover:underline">
+          <Link href="/catalog" className="text-accent underline-offset-4 hover:underline">
             Перейти в каталог
           </Link>
         </div>
       ) : (
         <div className="space-y-4">
           {orders.map((o) => (
-            <div key={o.id} className="rounded-2xl border bg-card p-6">
+            <div key={o.id} className="rounded-md bg-surface p-6 md:p-8">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <span className="font-semibold text-accent">
+                  <span className="font-display text-[26px] leading-none text-accent">
                     {o.orderNumber}
                   </span>
-                  <span className="ml-3 text-sm text-muted">
+                  <span className="ml-3 text-sm text-secondary">
                     {new Date(o.createdAt).toLocaleString("ru-RU")}
                   </span>
                 </div>
-                <span className="rounded-full bg-accent-soft px-3 py-1 text-sm text-accent-dark">
+                <span className="rounded-sm bg-accent-soft px-3 py-1 text-sm text-accent-hover">
                   {ORDER_STATUS_LABELS[o.status]}
                 </span>
               </div>
               <ul className="mt-3 space-y-1 text-sm">
                 {o.items?.map((i) => (
                   <li key={i.id} className="flex justify-between gap-2">
-                    <span className="text-muted">
+                    <span className="text-secondary">
                       {i.name} × {i.quantity}
                     </span>
                     <span>{formatPrice(i.price * i.quantity)}</span>
                   </li>
                 ))}
               </ul>
-              <div className="mt-3 flex items-center justify-between border-t pt-3">
-                <span className="text-sm text-muted">
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-4">
+                <span className="text-sm text-secondary">
                   {DELIVERY_METHOD_LABELS[o.deliveryMethod]} ·{" "}
                   {PAYMENT_METHOD_LABELS[o.paymentMethod]}
                 </span>
-                <span className="font-bold">{formatPrice(o.total)}</span>
+                <span className="text-[17px] font-semibold">{formatPrice(o.total)}</span>
               </div>
             </div>
           ))}

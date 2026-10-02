@@ -78,15 +78,15 @@ export default async function AdminProductsPage({
     <div>
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border bg-card p-5">
-          <div className="text-sm text-muted">Товаров</div>
+          <div className="text-sm text-secondary">Товаров</div>
           <div className="text-2xl font-bold">{products.length}</div>
         </div>
         <div className="rounded-2xl border bg-card p-5">
-          <div className="text-sm text-muted">Заказов всего</div>
+          <div className="text-sm text-secondary">Заказов всего</div>
           <div className="text-2xl font-bold">{orders.length}</div>
         </div>
         <div className="rounded-2xl border bg-card p-5">
-          <div className="text-sm text-muted">Новых заказов</div>
+          <div className="text-sm text-secondary">Новых заказов</div>
           <div className="text-2xl font-bold text-accent">{newOrders}</div>
         </div>
       </div>
@@ -101,14 +101,14 @@ export default async function AdminProductsPage({
         </Link>
       </div>
 
-      <p className="mb-3 text-xs text-muted">
+      <p className="mb-3 text-xs text-secondary">
         Клик по заголовку столбца сортирует по нему; повторный клик меняет
         направление (▲ по возрастанию / ▼ по убыванию).
       </p>
 
       <div className="overflow-x-auto rounded-2xl border bg-card">
         <table className="w-full min-w-[720px] text-sm">
-          <thead className="border-b bg-background/60 text-left text-muted">
+          <thead className="border-b bg-background/60 text-left text-secondary">
             <tr>
               {sortHeader(COLS[0])}
               {sortHeader(COLS[1])}
@@ -121,7 +121,7 @@ export default async function AdminProductsPage({
           <tbody>
             {products.map((p) => (
               <tr key={p.id} className="border-b last:border-0">
-                <td className="px-4 py-3 text-muted">{p.sku}</td>
+                <td className="px-4 py-3 text-secondary">{p.sku}</td>
                 <td className="px-4 py-3 font-medium">
                   <div className="flex items-center gap-3">
                     <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border bg-background">
@@ -135,11 +135,11 @@ export default async function AdminProductsPage({
                     <span>{p.name}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-muted">{p.categoryName}</td>
+                <td className="px-4 py-3 text-secondary">{p.categoryName}</td>
                 <td className="px-4 py-3 text-right">
                   {formatPrice(p.price)}
                   {p.oldPrice && (
-                    <span className="ml-1 text-xs text-muted line-through">
+                    <span className="ml-1 text-xs text-secondary line-through">
                       {formatPrice(p.oldPrice)}
                     </span>
                   )}
@@ -161,7 +161,7 @@ export default async function AdminProductsPage({
                     </Link>
                     <form action={deleteProductAction}>
                       <input type="hidden" name="id" value={p.id} />
-                      <button className="text-muted hover:text-accent">
+                      <button className="text-secondary hover:text-accent">
                         Удалить
                       </button>
                     </form>

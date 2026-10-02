@@ -99,7 +99,7 @@ export default function ProductImagesEditor({
                     className={`rounded-md border px-3 py-1 text-sm ${
                       isDeleted
                         ? "border-accent text-accent-dark"
-                        : "text-muted hover:border-accent hover:text-accent"
+                        : "text-secondary hover:border-accent hover:text-accent"
                     }`}
                   >
                     {isDeleted ? "вернуть" : "удалить"}
@@ -121,9 +121,9 @@ export default function ProductImagesEditor({
           multiple
           accept="image/png,image/jpeg,image/webp,image/gif"
           disabled={remaining === 0}
-          className="block w-full text-sm text-muted file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-accent-dark disabled:opacity-50"
+          className="block w-full text-sm text-secondary file:mr-3 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-accent-dark disabled:opacity-50"
         />
-        <span className="mt-1 block text-xs text-muted">
+        <span className="mt-1 block text-xs text-secondary">
           {remaining > 0
             ? `Можно добавить ещё ${remaining} (максимум ${MAX}). JPG, PNG, WEBP или GIF, до 5 МБ.`
             : `Достигнут максимум — ${MAX} изображения. Удалите лишние, чтобы добавить новые.`}

@@ -6,6 +6,13 @@ import Link from "next/link";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/site";
 import Honeypot from "@/components/Honeypot";
+import Button from "@/components/ui/Button";
+import {
+  inputClass,
+  labelClass,
+  selectClass,
+  textareaClass,
+} from "@/components/ui/Input";
 import {
   DELIVERY_METHODS,
   DELIVERY_METHOD_LABELS,
@@ -13,6 +20,12 @@ import {
 } from "@/lib/types";
 
 type Payment = "online" | "sbp" | "cash";
+
+const PAYMENTS: { value: Payment; label: string; badge?: string }[] = [
+  { value: "cash", label: "При получении (курьеру / на самовывозе)" },
+  { value: "online", label: "Онлайн-оплата картой", badge: "ЮKassa · тестовый режим" },
+  { value: "sbp", label: "СБП — оплата по QR из банковского приложения", badge: "тестовый режим" },
+];
 
 export default function CheckoutForm({
   initialName = "",
@@ -32,14 +45,13 @@ export default function CheckoutForm({
 
   if (ready && items.length === 0) {
     return (
-      <div className="container-page py-16 text-center">
-        <h1 className="text-2xl font-bold">Корзина пуста</h1>
-        <Link
-          href="/catalog"
-          className="mt-6 inline-block rounded-full bg-accent px-6 py-3 font-semibold text-white hover:bg-accent-dark"
-        >
-          В каталог
-        </Link>
+      <div className="container-page py-20 text-center md:py-32">
+        <h1 className="type-h3">Корзина пуста</h1>
+        <div className="mt-8">
+          <Button href="/catalog" arrow>
+            В каталог
+          </Button>
+        </div>
       </div>
     );
   }
@@ -75,33 +87,33 @@ export default function CheckoutForm({
     }
   }
 
-  const inputClass =
-    "w-full rounded-lg border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent";
-
   return (
-    <div className="container-page py-8">
-      <h1 className="mb-6 text-3xl font-bold">Оформление заказа</h1>
+    <div className="container-page pb-16 pt-10 md:pb-24 md:pt-14">
+      <h1 className="type-h3">Оформление заказа</h1>
 
       {!isAuthed && (
-        <p className="mb-6 rounded-2xl border bg-card p-4 text-sm text-muted">
+        <p className="type-small mt-6 rounded-md bg-surface px-5 py-4 text-secondary">
           Оформляете как гость.{" "}
-          <Link href="/account/login" className="text-accent hover:underline">
+          <Link href="/account/login" className="text-accent underline-offset-4 hover:underline">
             Войдите
           </Link>{" "}
           или{" "}
-          <Link href="/account/register" className="text-accent hover:underline">
+          <Link href="/account/register" className="text-accent underline-offset-4 hover:underline">
             зарегистрируйтесь
           </Link>
           , чтобы заказы сохранялись в личном кабинете.
         </p>
       )}
 
-      <form onSubmit={handleSubmit} className="grid gap-8 lg:grid-cols-[1fr_360px]">
+      <form
+        onSubmit={handleSubmit}
+        className="mt-8 grid gap-8 md:mt-10 lg:grid-cols-[1fr_400px] lg:gap-14"
+      >
         <Honeypot />
-        <div className="space-y-5 rounded-2xl border bg-card p-6">
-          <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-6 rounded-md bg-surface p-6 md:p-10">
+          <div className="grid gap-6 sm:grid-cols-2">
             <label className="block">
-              <span className="mb-1 block text-sm font-medium">Имя *</span>
+              <span className={labelClass}>Имя *</span>
               <input
                 name="name"
                 required
@@ -111,7 +123,7 @@ export default function CheckoutForm({
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-sm font-medium">Телефон *</span>
+              <span className={labelClass}>Телефон *</span>
               <input
                 name="phone"
                 required
@@ -123,7 +135,7 @@ export default function CheckoutForm({
             </label>
           </div>
           <label className="block">
-            <span className="mb-1 block text-sm font-medium">Email *</span>
+            <span className={labelClass}>Email *</span>
             <input
               name="email"
               required
@@ -135,18 +147,18 @@ export default function CheckoutForm({
               placeholder="you@example.com"
             />
             {isAuthed && (
-              <span className="mt-1 block text-xs text-muted">
+              <span className="type-small mt-1.5 block text-secondary">
                 Email вашего аккаунта — заказ сохранится в кабинете.
               </span>
             )}
           </label>
           <label className="block">
-            <span className="mb-1 block text-sm font-medium">Служба доставки</span>
+            <span className={labelClass}>Служба доставки</span>
             <select
               name="delivery"
               value={delivery}
               onChange={(e) => setDelivery(e.target.value as DeliveryMethod)}
-              className={inputClass}
+              className={selectClass}
             >
               {DELIVERY_METHODS.map((d) => (
                 <option key={d} value={d}>
@@ -156,9 +168,7 @@ export default function CheckoutForm({
             </select>
           </label>
           <label className="block">
-            <span className="mb-1 block text-sm font-medium">
-              Адрес / пункт выдачи
-            </span>
+            <span className={labelClass}>Адрес / пункт выдачи</span>
             <input
               name="address"
               className={inputClass}
@@ -167,85 +177,73 @@ export default function CheckoutForm({
             />
           </label>
           <label className="block">
-            <span className="mb-1 block text-sm font-medium">Комментарий к заказу</span>
-            <textarea name="comment" rows={3} className={inputClass} />
+            <span className={labelClass}>Комментарий к заказу</span>
+            <textarea name="comment" rows={3} className={textareaClass} />
           </label>
 
-          <fieldset className="space-y-2">
-            <legend className="mb-1 text-sm font-medium">Способ оплаты</legend>
-            <label className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 hover:border-accent">
-              <input
-                type="radio"
-                name="payment"
-                checked={payment === "cash"}
-                onChange={() => setPayment("cash")}
-              />
-              <span className="text-sm">При получении (курьеру / на самовывозе)</span>
-            </label>
-            <label className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 hover:border-accent">
-              <input
-                type="radio"
-                name="payment"
-                checked={payment === "online"}
-                onChange={() => setPayment("online")}
-              />
-              <span className="text-sm">
-                Онлайн-оплата картой
-                <span className="ml-1 rounded bg-accent-soft px-1.5 py-0.5 text-xs text-accent-dark">
-                  ЮKassa · тестовый режим
+          <fieldset className="space-y-3">
+            <legend className={labelClass}>Способ оплаты</legend>
+            {PAYMENTS.map((p) => (
+              <label
+                key={p.value}
+                className={`flex cursor-pointer items-center gap-4 rounded-sm border bg-white px-4 py-4 transition-colors ease-brand hover:border-accent ${
+                  payment === p.value ? "border-accent" : "border-border"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="payment"
+                  checked={payment === p.value}
+                  onChange={() => setPayment(p.value)}
+                  className="h-4 w-4 shrink-0 accent-[#A8552E]"
+                />
+                <span className="text-[15px] leading-snug text-foreground">
+                  {p.label}
+                  {p.badge && (
+                    <span className="ml-2 inline-block rounded-sm bg-accent-soft px-2 py-0.5 text-xs text-accent-hover">
+                      {p.badge}
+                    </span>
+                  )}
                 </span>
-              </span>
-            </label>
-            <label className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 hover:border-accent">
-              <input
-                type="radio"
-                name="payment"
-                checked={payment === "sbp"}
-                onChange={() => setPayment("sbp")}
-              />
-              <span className="text-sm">
-                СБП — оплата по QR из банковского приложения
-                <span className="ml-1 rounded bg-accent-soft px-1.5 py-0.5 text-xs text-accent-dark">
-                  тестовый режим
-                </span>
-              </span>
-            </label>
+              </label>
+            ))}
           </fieldset>
         </div>
 
-        <aside className="h-fit space-y-4 rounded-2xl border bg-card p-6 lg:sticky lg:top-28">
-          <h2 className="font-semibold">Ваш заказ</h2>
-          <ul className="space-y-2 text-sm">
+        <aside className="h-fit space-y-5 rounded-md bg-surface p-7 md:p-8 lg:sticky lg:top-28">
+          <h2 className="type-h4 !text-[26px]">Ваш заказ</h2>
+          <ul className="space-y-3 text-sm">
             {items.map((i) => (
-              <li key={i.id} className="flex justify-between gap-2">
-                <span className="text-muted">
+              <li key={i.id} className="flex justify-between gap-3">
+                <span className="text-secondary">
                   {i.name} × {i.quantity}
                 </span>
-                <span className="whitespace-nowrap">
+                <span className="whitespace-nowrap text-foreground">
                   {formatPrice(i.price * i.quantity)}
                 </span>
               </li>
             ))}
           </ul>
-          <div className="flex items-center justify-between border-t pt-3 text-lg">
-            <span>Итого</span>
-            <span className="font-bold">{formatPrice(total)}</span>
+          <div className="flex items-baseline justify-between border-t border-border pt-5">
+            <span className="type-body text-secondary">Итого</span>
+            <span className="text-[28px] font-semibold leading-none">
+              {formatPrice(total)}
+            </span>
           </div>
 
           {error && (
-            <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm text-accent-dark">
+            <p
+              role="alert"
+              className="type-small rounded-sm bg-accent-soft px-4 py-3 text-accent-hover"
+            >
               {error}
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={submitting || !ready}
-            className="w-full rounded-full bg-accent px-6 py-3 font-semibold text-white hover:bg-accent-dark disabled:opacity-50"
-          >
+          <Button type="submit" disabled={submitting || !ready} className="w-full">
             {submitting ? "Оформляем…" : "Подтвердить заказ"}
-          </button>
-          <p className="text-center text-xs text-muted">
+          </Button>
+          <p className="type-small text-center text-secondary">
             Демо-магазин: реальная оплата и доставка не производятся.
           </p>
         </aside>
