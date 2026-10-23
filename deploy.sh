@@ -1,8 +1,17 @@
 #!/bin/bash
-# Автодеплой market-store на VDS. Защита от параллельного запуска через flock
-# (cron дёргает проверку каждые 2 минуты).
-exec 200>/tmp/deploy-market-store.lock
-flock -n 200 || { echo "$(date): деплой уже выполняется, пропускаю"; exit 1; }
+# Ручной (запасной) деплой market-store на noemi. Основной путь: автодеплой
+# /root/bin/site-autodeploy.sh по пушу в master (cron раз в 2 минуты), этот скрипт
+# cron'ом не вызывается.
+# Берёт те же блокировки, что и автодеплой:
+#   /run/lock/autodeploy-market-store.lock  не пересекается с автодеплоем магазина;
+#   /run/lock/autodeploy-build.lock         общая очередь: на сервере одновременно идёт одна сборка.
+exec 200>/run/lock/autodeploy-market-store.lock
+flock -n 200 || { echo "$(date): деплой market-store уже выполняется (автодеплой или ручной), пропускаю"; exit 1; }
+exec 201>/run/lock/autodeploy-build.lock
+if ! flock -n 201; then
+  echo "$(date): идёт сборка другого сайта, жду очереди (до 60 минут)..."
+  flock -w 3600 201 || { echo "$(date): не дождался очереди сборки, выхожу"; exit 1; }
+fi
 
 set -e
 cd /var/www/market-store
