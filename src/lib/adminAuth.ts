@@ -1,21 +1,27 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createHash, timingSafeEqual } from "node:crypto";
+import { isDemoExpired } from "./demoExpiry";
 
 /**
  * Авторизация админки без публичной CMS. Две роли:
  *
- * - owner: полный доступ. Пароль из ADMIN_PASSWORD (на сервере в .env.local,
- *   для локалки дефолт "admin"). Вход по одному паролю, логин не нужен.
+ * - owner: полный доступ. Пароль из ADMIN_PASSWORD, логин из ADMIN_LOGIN
+ *   (на сервере в .env.local). Если ADMIN_LOGIN задан, он ОБЯЗАТЕЛЕН: пустой
+ *   логин или чужой с паролем владельца не пускает. Если не задан (локальная
+ *   разработка), работает прежний вход по одному паролю (логин пустой или
+ *   "admin"), дефолтный пароль "admin".
  * - demo: демо-аккаунт «владельца» для показа заказчикам. Логин из
- *   DEMO_ADMIN_LOGIN (по умолчанию "demo"), пароль из DEMO_ADMIN_PASSWORD.
- *   Если DEMO_ADMIN_PASSWORD не задан, демо-вход выключен. Демо видит товары
- *   и заказы, может создавать и редактировать товары и менять статусы
- *   заказов, но НЕ может удалять товары и их изображения и не имеет доступа к
- *   настройкам сайта (логотип и т.п.).
+ *   DEMO_ADMIN_LOGIN (по умолчанию "demo"), пароль из DEMO_ADMIN_PASSWORD;
+ *   без пароля демо-вход выключен. Срок: DEMO_ADMIN_EXPIRES (YYYY-MM-DD),
+ *   включительно до конца дня по Москве, после этого вход и уже выданные
+ *   сессии отклоняются на сервере; не задан, значит срок не ограничен.
+ *   Демо видит товары и заказы, создаёт и редактирует товары, меняет статусы
+ *   заказов, но НЕ удаляет товары и их изображения и не видит настройки сайта.
  *
- * В cookie кладётся не пароль, а SHA-256 (для demo с префиксом "demo."), его
- * и сверяем. Токен owner не менялся, уже выданные сессии остаются в силе.
+ * В cookie кладётся не пароль, а SHA-256. Токен владельца при заданном
+ * ADMIN_LOGIN зависит и от логина (старые сессии без логина перестают
+ * действовать); токен демо имеет префикс "demo.".
  */
 
 const COOKIE_NAME = "market_admin";
@@ -24,6 +30,16 @@ export type AdminRole = "owner" | "demo";
 
 function adminPassword(): string {
   return process.env.ADMIN_PASSWORD || "admin";
+}
+
+/** Обязательный логин владельца (в нижнем регистре) или null, если не задан. */
+function adminLogin(): string | null {
+  return process.env.ADMIN_LOGIN?.trim().toLowerCase() || null;
+}
+
+/** true, если вход владельца требует логин (для формы входа). */
+export function adminLoginRequired(): boolean {
+  return adminLogin() !== null;
 }
 
 function demoLogin(): string {
@@ -44,9 +60,11 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 export function expectedToken(): string {
-  return createHash("sha256")
-    .update(`market-admin:${adminPassword()}`)
-    .digest("hex");
+  const login = adminLogin();
+  const seed = login
+    ? `market-admin:${login}:${adminPassword()}`
+    : `market-admin:${adminPassword()}`;
+  return createHash("sha256").update(seed).digest("hex");
 }
 
 function expectedDemoToken(): string | null {
@@ -60,6 +78,13 @@ function expectedDemoToken(): string | null {
   );
 }
 
+/** Демо доступно: пароль задан и срок (если есть) не истёк. */
+function demoActive(): boolean {
+  return (
+    demoPassword() !== null && !isDemoExpired(process.env.DEMO_ADMIN_EXPIRES)
+  );
+}
+
 /** Роль текущего посетителя или null, если не авторизован. */
 export async function getAdminRole(): Promise<AdminRole | null> {
   const store = await cookies();
@@ -67,7 +92,9 @@ export async function getAdminRole(): Promise<AdminRole | null> {
   if (!token) return null;
   if (safeEqual(token, expectedToken())) return "owner";
   const demo = expectedDemoToken();
-  if (demo && safeEqual(token, demo)) return "demo";
+  // срок демо проверяется на каждый запрос, поэтому действует и на уже
+  // выданные сессии
+  if (demo && demoActive() && safeEqual(token, demo)) return "demo";
   return null;
 }
 
@@ -80,20 +107,20 @@ export async function isOwner(): Promise<boolean> {
   return (await getAdminRole()) === "owner";
 }
 
-/**
- * Вход. Пустой логин (или "admin") означает основной доступ по паролю
- * ADMIN_PASSWORD; логин демо-аккаунта проверяется по DEMO_ADMIN_*.
- */
+/** Вход: логин и пароль проверяются по роли, у каждой роли свой логин. */
 export async function signInAdmin(
   password: string,
   login = "",
 ): Promise<boolean> {
   const l = login.trim().toLowerCase();
+  const ownerLogin = adminLogin();
   let token: string | null = null;
 
-  if (l === "" || l === "admin") {
+  // владелец: при заданном ADMIN_LOGIN нужен именно он, иначе прежний режим
+  const ownerLoginOk = ownerLogin ? l === ownerLogin : l === "" || l === "admin";
+  if (ownerLoginOk) {
     if (safeEqual(password, adminPassword())) token = expectedToken();
-  } else if (l === demoLogin()) {
+  } else if (l === demoLogin() && demoActive()) {
     const dp = demoPassword();
     if (dp && safeEqual(password, dp)) token = expectedDemoToken();
   }

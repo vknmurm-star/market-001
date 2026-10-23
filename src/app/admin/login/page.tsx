@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { isAdminAuthed } from "@/lib/adminAuth";
+import { adminLoginRequired, isAdminAuthed } from "@/lib/adminAuth";
 import PasswordInput from "@/components/PasswordInput";
 import { loginAction } from "../actions";
 
@@ -15,6 +15,7 @@ export default async function AdminLoginPage({
   if (await isAdminAuthed()) redirect("/admin");
   const sp = await searchParams;
   const hasError = sp.error === "1";
+  const loginRequired = adminLoginRequired();
 
   return (
     <div className="mx-auto max-w-sm rounded-2xl border bg-card p-8">
@@ -25,7 +26,8 @@ export default async function AdminLoginPage({
           <input
             name="login"
             autoComplete="username"
-            placeholder="если выдан"
+            required={loginRequired}
+            placeholder={loginRequired ? "email или логин" : "если выдан"}
             className="w-full rounded-lg border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent"
           />
         </label>
