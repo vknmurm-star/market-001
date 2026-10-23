@@ -30,7 +30,7 @@ export default async function AdminProductsPage({
 }: {
   searchParams: SearchParams;
 }) {
-  await requireAdmin();
+  const role = await requireAdmin();
   const sp = await searchParams;
   const sort: SortKey =
     typeof sp.sort === "string" && ALL_SORT_KEYS.includes(sp.sort as SortKey)
@@ -159,12 +159,14 @@ export default async function AdminProductsPage({
                     >
                       Изменить
                     </Link>
-                    <form action={deleteProductAction}>
-                      <input type="hidden" name="id" value={p.id} />
-                      <button className="text-secondary hover:text-accent">
-                        Удалить
-                      </button>
-                    </form>
+                    {role === "owner" && (
+                      <form action={deleteProductAction}>
+                        <input type="hidden" name="id" value={p.id} />
+                        <button className="text-secondary hover:text-accent">
+                          Удалить
+                        </button>
+                      </form>
+                    )}
                   </div>
                 </td>
               </tr>

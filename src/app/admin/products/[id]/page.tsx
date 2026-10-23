@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 type Params = Promise<{ id: string }>;
 
 export default async function EditProductPage({ params }: { params: Params }) {
-  await requireAdmin();
+  const role = await requireAdmin();
   const { id } = await params;
   const product = getProductById(Number(id));
   if (!product) notFound();
@@ -27,6 +27,7 @@ export default async function EditProductPage({ params }: { params: Params }) {
         action={updateProductAction}
         product={product}
         images={images}
+        canDeleteImages={role === "owner"}
       />
     </div>
   );

@@ -8,8 +8,10 @@ const MAX = 4;
 
 export default function ProductImagesEditor({
   images,
+  canDelete = true,
 }: {
   images: ProductImage[];
+  canDelete?: boolean;
 }) {
   const byId = new Map(images.map((i) => [i.id, i]));
   const [order, setOrder] = useState<number[]>(images.map((i) => i.id));
@@ -93,17 +95,19 @@ export default function ProductImagesEditor({
                   >
                     ↓
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleDelete(id)}
-                    className={`rounded-md border px-3 py-1 text-sm ${
-                      isDeleted
-                        ? "border-accent text-accent-dark"
-                        : "text-secondary hover:border-accent hover:text-accent"
-                    }`}
-                  >
-                    {isDeleted ? "вернуть" : "удалить"}
-                  </button>
+                  {canDelete && (
+                    <button
+                      type="button"
+                      onClick={() => toggleDelete(id)}
+                      className={`rounded-md border px-3 py-1 text-sm ${
+                        isDeleted
+                          ? "border-accent text-accent-dark"
+                          : "text-secondary hover:border-accent hover:text-accent"
+                      }`}
+                    >
+                      {isDeleted ? "вернуть" : "удалить"}
+                    </button>
+                  )}
                 </div>
               </li>
             );

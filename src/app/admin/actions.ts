@@ -2,7 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { isAdminAuthed, signInAdmin, signOutAdmin } from "@/lib/adminAuth";
+import {
+  getAdminRole,
+  isAdminAuthed,
+  signInAdmin,
+  signOutAdmin,
+} from "@/lib/adminAuth";
 import {
   addProductImage,
   countProductImages,
@@ -28,9 +33,17 @@ async function ensureAuthed() {
   }
 }
 
+/** Действия, недоступные демо-аккаунту (удаление, настройки сайта). */
+async function ensureOwner() {
+  if ((await getAdminRole()) !== "owner") {
+    throw new Error("Недоступно в демо-режиме");
+  }
+}
+
 export async function loginAction(formData: FormData) {
   const password = String(formData.get("password") ?? "");
-  const ok = await signInAdmin(password);
+  const login = String(formData.get("login") ?? "");
+  const ok = await signInAdmin(password, login);
   if (!ok) {
     redirect("/admin/login?error=1");
   }
@@ -107,10 +120,13 @@ export async function updateProductAction(formData: FormData) {
   const input = parseProduct(formData);
   updateProduct(id, input);
 
-  // удаление отмеченных изображений (вместе с файлами на диске)
-  for (const raw of formData.getAll("deleteImage")) {
-    const imgId = Number(raw);
-    if (Number.isInteger(imgId)) deleteProductImage(imgId);
+  // удаление отмеченных изображений (вместе с файлами на диске); демо-аккаунту
+  // удалять изображения нельзя
+  if ((await getAdminRole()) === "owner") {
+    for (const raw of formData.getAll("deleteImage")) {
+      const imgId = Number(raw);
+      if (Number.isInteger(imgId)) deleteProductImage(imgId);
+    }
   }
   // порядок оставшихся
   applyImageOrder(formData, id);
@@ -123,14 +139,14 @@ export async function updateProductAction(formData: FormData) {
 }
 
 export async function deleteProductAction(formData: FormData) {
-  await ensureAuthed();
+  await ensureOwner();
   const id = Number(formData.get("id"));
   deleteProduct(id);
   revalidatePath("/admin");
 }
 
 export async function uploadLogoAction(formData: FormData) {
-  await ensureAuthed();
+  await ensureOwner();
   const file = formData.get("logoFile");
   if (!(file instanceof File) || file.size === 0) {
     redirect("/admin/settings?error=" + encodeURIComponent("Выберите файл"));
@@ -150,7 +166,7 @@ export async function uploadLogoAction(formData: FormData) {
 }
 
 export async function removeLogoAction() {
-  await ensureAuthed();
+  await ensureOwner();
   const old = getSetting("site_logo");
   setSetting("site_logo", null);
   if (old) deleteUploadFile(old);

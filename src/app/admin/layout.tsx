@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { isAdminAuthed } from "@/lib/adminAuth";
+import { getAdminRole } from "@/lib/adminAuth";
 import { logoutAction } from "./actions";
 
 export const metadata: Metadata = {
@@ -13,7 +13,9 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const authed = await isAdminAuthed();
+  const role = await getAdminRole();
+  const authed = role !== null;
+  const isDemo = role === "demo";
 
   return (
     <div className="container-page py-8">
@@ -31,10 +33,20 @@ export default async function AdminLayout({
               <Link href="/admin/products/new" className="hover:text-accent">
                 + Добавить товар
               </Link>
-              <Link href="/admin/settings" className="hover:text-accent">
-                Настройки
-              </Link>
+              {!isDemo && (
+                <Link href="/admin/settings" className="hover:text-accent">
+                  Настройки
+                </Link>
+              )}
             </nav>
+            {isDemo && (
+              <span
+                className="rounded-full bg-accent-soft px-3 py-1 text-xs text-accent-hover"
+                title="Удаление товаров и настройки сайта недоступны"
+              >
+                Демо-доступ
+              </span>
+            )}
             <form action={logoutAction} className="ml-auto">
               <button className="text-sm text-secondary hover:text-accent">Выйти</button>
             </form>

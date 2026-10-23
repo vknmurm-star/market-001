@@ -21,11 +21,19 @@ export default async function AdminLoginPage({
       <h1 className="mb-4 text-xl font-bold">Вход в админ-панель</h1>
       <form action={loginAction} className="space-y-4">
         <label className="block">
+          <span className="mb-1 block text-sm font-medium">Логин</span>
+          <input
+            name="login"
+            autoComplete="username"
+            placeholder="если выдан"
+            className="w-full rounded-lg border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent"
+          />
+        </label>
+        <label className="block">
           <span className="mb-1 block text-sm font-medium">Пароль</span>
           <PasswordInput
             name="password"
             required
-            autoFocus
             className="w-full rounded-lg border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent"
           />
         </label>

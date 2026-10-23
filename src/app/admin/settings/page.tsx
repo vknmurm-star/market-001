@@ -16,7 +16,17 @@ export default async function AdminSettingsPage({
 }: {
   searchParams: SearchParams;
 }) {
-  await requireAdmin();
+  const role = await requireAdmin();
+  if (role !== "owner") {
+    return (
+      <div className="max-w-2xl">
+        <h1 className="mb-4 text-2xl font-bold">Настройки сайта</h1>
+        <p className="rounded-2xl border bg-card px-4 py-3 text-sm text-secondary">
+          Настройки сайта недоступны в демо-режиме.
+        </p>
+      </div>
+    );
+  }
   const sp = await searchParams;
   const logo = getSetting("site_logo");
   const ok = typeof sp.ok === "string" ? OK[sp.ok] : "";

@@ -9,11 +9,14 @@ export default function ProductForm({
   action,
   product,
   images = [],
+  canDeleteImages = true,
 }: {
   categories: Category[];
   action: (formData: FormData) => void;
   product?: Product;
   images?: ProductImage[];
+  /** false для демо-аккаунта: удалять изображения нельзя */
+  canDeleteImages?: boolean;
 }) {
   const inputClass =
     "w-full rounded-lg border bg-background px-4 py-2.5 text-sm outline-none focus:border-accent";
@@ -125,7 +128,7 @@ export default function ProductForm({
             </span>
           </div>
         )}
-        <ProductImagesEditor images={images} />
+        <ProductImagesEditor images={images} canDelete={canDeleteImages} />
       </div>
 
       <div className="flex items-center gap-3 pt-2">
